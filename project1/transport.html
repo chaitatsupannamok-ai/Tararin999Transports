@@ -602,6 +602,7 @@ var _fdbReady = false;
 })();
 
 function saveDB() {
+  db._updated = Date.now();   // version stamp so stale copies can't clobber newer data
   try { localStorage.setItem('transportDB', JSON.stringify(db)); } catch(e) {}
   _saveToFirestore();
 }
@@ -619,7 +620,7 @@ function _syncDot(state) {
 function _saveToFirestore() {
   if (!_fdb) return;
   _syncDot('syncing');
-  var payload = {'6wheel':db['6wheel']||[],'trailer':db['trailer']||[],updated:Date.now()};
+  var payload = {'6wheel':db['6wheel']||[],'trailer':db['trailer']||[],updated:db._updated||Date.now()};
   _fdb.collection('trr_config').doc('drivers').set(payload)
     .then(function(){ _syncDot('ok'); })
     .catch(function(e){ console.error('Firestore save:',e); _syncDot('err'); });
@@ -654,7 +655,10 @@ function ensureMasterPlates() {
       }
     });
   });
-  if (changed) saveDB();
+  // Placeholder master plates are derived locally on every device — save them to
+  // localStorage only. Never push these blanks to Firebase (that clobbered real
+  // data before: an empty device overwrote everyone's names/sites).
+  if (changed) { try { localStorage.setItem('transportDB', JSON.stringify(db)); } catch(e) {} }
 }
 
 // ═══════════════════════════════════════════════
@@ -1981,14 +1985,31 @@ document.getElementById('headerText').value = ds0;
 // Load Firestore FIRST, then ensureMasterPlates — prevents race where
 // ensureMasterPlates saves empty data that Firestore load then reads back
 if (_fdbReady) {
-  _fdb.collection('trr_config').doc('drivers').get().then(function(doc){
+  // Force a fresh SERVER read (never the offline cache) and only accept it when
+  // it is NEWER than what this device already has — a stale/empty copy must not
+  // overwrite local edits. If local is newer, push it back to restore the server.
+  _fdb.collection('trr_config').doc('drivers').get({ source: 'server' }).then(function(doc){
     if (doc.exists) {
       var data = doc.data();
-      db['6wheel'] = data['6wheel'] || [];
-      db['trailer'] = data['trailer'] || [];
-      try { localStorage.setItem('transportDB', JSON.stringify(db)); } catch(e) {}
+      var remoteTs = data.updated || 0;
+      var localTs  = db._updated || 0;
+      var remoteNamed = (data['6wheel']||[]).filter(function(x){return x&&x.name&&x.name.trim();}).length;
+      var localNamed  = (db['6wheel']||[]).filter(function(x){return x&&x.name&&x.name.trim();}).length;
+      // Accept remote only if it is strictly newer AND not obviously emptier than local.
+      if (remoteTs > localTs && remoteNamed >= localNamed) {
+        db['6wheel']  = data['6wheel'] || [];
+        db['trailer'] = data['trailer'] || [];
+        db._updated   = remoteTs;
+        try { localStorage.setItem('transportDB', JSON.stringify(db)); } catch(e) {}
+      } else if (localTs > remoteTs || localNamed > remoteNamed) {
+        // Local is the good/newer copy → restore the server from it.
+        _saveToFirestore();
+      }
+    } else {
+      _saveToFirestore();   // no server doc yet → seed it from local
     }
     ensureMasterPlates();
+    renderDriverTable();
     _syncDot('ok');
   }).catch(function(e){
     console.warn('Startup Firestore load:', e);

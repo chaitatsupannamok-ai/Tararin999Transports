@@ -852,9 +852,12 @@ html.in-iframe .page-body{flex:1!important;min-height:0!important}
 // Config
 // ═══════════════════════════════════════════
 var SHEET_ID = '1HC2aGOvAUx-s82kBi2cMU-8U3k4POiqn7IXYeWr-C4c';
-var FUEL_SH  = ['01','02','03','04','05','06','01 tr','02 tr','03 tr','04 tr','05tr','06tr'];
-var HUB_SH   = ['HUB1','HUB2','HUB3','HUB4','HUB5','HUB6'];
-var KHON_SH  = ['ขนคืน1','ขนคืน2','ขนคืน3','ขนคืน4','ขนคืน5'];
+// Fallback tab lists (used only if dynamic listSheets discovery fails, e.g. on
+// devices where script.google.com is blocked). Auto-discovery keeps the live
+// data current without editing these each month.
+var FUEL_SH  = ['01','02','03','04','05','06','07','01 tr','02 tr','03 tr','04 tr','05tr','06tr','07tr'];
+var HUB_SH   = ['HUB1','HUB2','HUB3','HUB4','HUB5','HUB6','HUB7'];
+var KHON_SH  = ['ขนคืน1','ขนคืน2','ขนคืน3','ขนคืน4','ขนคืน5','ขนคืน6','ขนคืน7'];
 var ROSTER_SH= 'รายชื่อคนขับ';
 var ALL_SH   = FUEL_SH.concat(HUB_SH).concat(KHON_SH);
 
@@ -1440,7 +1443,42 @@ function reloadAll(){
   document.getElementById('ld-bar').style.width='0%';
   loadAll();
 }
+// Dynamically discover the live sheet tabs so new months appear without code edits.
+function fetchSheetList(){
+  return new Promise(function(resolve){
+    if(!gasUrl){resolve(null);return;}
+    var cb='ls_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    var script=document.createElement('script');
+    var timer=setTimeout(function(){cleanup();resolve(null);},5000);
+    function cleanup(){clearTimeout(timer);delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);}
+    window[cb]=function(res){cleanup();resolve(res&&res.ok&&res.sheets&&res.sheets.length?res.sheets:null);};
+    script.onerror=function(){cleanup();resolve(null);};
+    script.src=gasUrl+'?callback='+cb+'&action=listSheets&id='+encodeURIComponent(SHEET_ID);
+    document.head.appendChild(script);
+  });
+}
+function classifySheets(names){
+  var fuel=[],hub=[],khon=[];
+  names.forEach(function(n){
+    var t=(n||'').trim();
+    if(/^\d{2}(\s*tr)?$/i.test(t))fuel.push(n);          // 01, 07, "01 tr", 05tr, 07tr
+    else if(/^HUB\s*\d+$/i.test(t))hub.push(n);          // HUB1..HUB7 (plain "HUB" excluded)
+    else if(/^ขนคืน\s*\d+$/.test(t))khon.push(n);        // ขนคืน1..ขนคืน7
+  });
+  return {fuel:fuel,hub:hub,khon:khon};
+}
+// Entry point: try live discovery, fall back to hardcoded lists, then load.
 function loadAll(){
+  fetchSheetList().then(function(names){
+    if(names){
+      var c=classifySheets(names);
+      if(c.fuel.length){FUEL_SH=c.fuel;HUB_SH=c.hub;KHON_SH=c.khon;ALL_SH=FUEL_SH.concat(HUB_SH).concat(KHON_SH);
+        console.log('[Fleet] discovered '+ALL_SH.length+' data tabs via listSheets');}
+    }
+    _loadAllSheets();
+  });
+}
+function _loadAllSheets(){
   var total=ALL_SH.length+1;
   var rosterP=fetchSheet(ROSTER_SH).then(function(data){
     loadDone++;setLd('โหลด รายชื่อคนขับ');masterPlates=parseRoster(data);
