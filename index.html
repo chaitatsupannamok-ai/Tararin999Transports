@@ -1495,10 +1495,16 @@ function prefetchPages(){
   // Respect data-saver / very slow connections
   try{var c=navigator.connection;if(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')))return;}catch(e){}
   var pool=document.getElementById('frame-pool');
+  // Heavy modules run background timers / big datasets (Fleet View's 1s clock +
+  // ~5k trips, Fleet Card's Handsontable, Dashboard charts, ต้นทุน distance
+  // tables). Prefetching them keeps that work alive in hidden iframes and lags
+  // the desktop. Load those on demand instead — keep-alive still makes the 2nd
+  // visit instant. Only the light pages are pre-warmed.
+  var PREFETCH_SKIP=['./fleet_view/index.html','./project2/index.html','./dashboard/index.html','./trr.html'];
   var pages=Array.prototype.slice.call(document.querySelectorAll('.sb-nav .nav-item'))
     .filter(function(el){return el.style.display!=='none';})
     .map(function(el){return el.getAttribute('data-page');})
-    .filter(function(p){return p && p!=='home';});
+    .filter(function(p){return p && p!=='home' && PREFETCH_SKIP.indexOf(p)<0;});
   // Preferred load order: เช็คชื่อเข้างาน first, then the rest in menu order.
   var PREFETCH_PRIORITY=['./attendance/index.html'];
   pages.sort(function(a,b){
