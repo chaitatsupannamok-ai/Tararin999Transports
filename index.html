@@ -16,6 +16,8 @@
 <link rel="stylesheet" href="./glass.css?v=1">
 <link rel="stylesheet" href="./ui-fx.css?v=1">
 <script>
+/* App version — bump on every deploy so you can tell if the live site updated */
+var APP_VERSION='v1.5.0 (2026-07-06)';
 /* Dark mode + accent — apply BEFORE render to prevent flash */
 (function(){
   if(localStorage.getItem('trr_dark_mode')==='1')
@@ -23,6 +25,11 @@
   var a=localStorage.getItem('trr_accent');
   if(a&&a!=='ocean')document.documentElement.setAttribute('data-accent',a);
 })();
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('app-version');
+  if(el)el.textContent=APP_VERSION;
+  try{console.log('TARARIN 999 Portal '+APP_VERSION);}catch(e){}
+});
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -865,7 +872,7 @@ html.dark .pf-orb{opacity:.22}
       <button class="acc-sw" data-accent="rose"    style="--sw:#e11d48" aria-label="สีชมพู"></button>
       <button class="acc-sw" data-accent="sunset"  style="--sw:#ea580c" aria-label="สีส้ม"></button>
     </div>
-    <div class="sb-copyright">© 2026 TARARIN 999</div>
+    <div class="sb-copyright">© 2026 TARARIN 999 · <span id="app-version"></span></div>
   </div>
 </aside>
 
