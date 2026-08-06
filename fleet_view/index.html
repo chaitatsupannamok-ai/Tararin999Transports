@@ -855,9 +855,9 @@ var SHEET_ID = '1HC2aGOvAUx-s82kBi2cMU-8U3k4POiqn7IXYeWr-C4c';
 // Fallback tab lists (used only if dynamic listSheets discovery fails, e.g. on
 // devices where script.google.com is blocked). Auto-discovery keeps the live
 // data current without editing these each month.
-var FUEL_SH  = ['01','02','03','04','05','06','07','01 tr','02 tr','03 tr','04 tr','05tr','06tr','07tr'];
-var HUB_SH   = ['HUB1','HUB2','HUB3','HUB4','HUB5','HUB6','HUB7'];
-var KHON_SH  = ['ขนคืน1','ขนคืน2','ขนคืน3','ขนคืน4','ขนคืน5','ขนคืน6','ขนคืน7'];
+var FUEL_SH  = ['01','02','03','04','05','06','07','08','09','10','11','12','01 tr','02 tr','03 tr','04 tr','05tr','06tr','07tr','08tr','09tr','10tr','11tr','12tr'];
+var HUB_SH   = ['HUB1','HUB2','HUB3','HUB4','HUB5','HUB6','HUB7','HUB8','HUB9','HUB10','HUB11','HUB12'];
+var KHON_SH  = ['ขนคืน1','ขนคืน2','ขนคืน3','ขนคืน4','ขนคืน5','ขนคืน6','ขนคืน7','ขนคืน8','ขนคืน9','ขนคืน10','ขนคืน11','ขนคืน12'];
 var ROSTER_SH= 'รายชื่อคนขับ';
 var ALL_SH   = FUEL_SH.concat(HUB_SH).concat(KHON_SH);
 
@@ -943,7 +943,7 @@ function findCols(cols,hints){
 function fetchSheet(name){
   return new Promise(function(resolve,reject){
     var cb='gv_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json;responseHandler:'+cb+'&sheet='+encodeURIComponent(name);
+    var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json;responseHandler:'+cb+'&sheet='+encodeURIComponent(name)+'&_cb='+Date.now();
     var script=document.createElement('script');
     var timer=setTimeout(function(){cleanup();reject(new Error('timeout:'+name));},15000);
     function cleanup(){clearTimeout(timer);delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);}
@@ -1467,13 +1467,18 @@ function classifySheets(names){
   });
   return {fuel:fuel,hub:hub,khon:khon};
 }
-// Entry point: try live discovery, fall back to hardcoded lists, then load.
+function _union(a,b){var seen={},out=[];a.concat(b).forEach(function(x){var k=(x||'').trim();if(k&&!seen[k]){seen[k]=1;out.push(x);}});return out;}
+// Entry point: try live discovery, UNION with the fallback lists (so the current
+// month is loaded even if listSheets returns a stale/partial list), then load.
 function loadAll(){
   fetchSheetList().then(function(names){
     if(names){
       var c=classifySheets(names);
-      if(c.fuel.length){FUEL_SH=c.fuel;HUB_SH=c.hub;KHON_SH=c.khon;ALL_SH=FUEL_SH.concat(HUB_SH).concat(KHON_SH);
-        console.log('[Fleet] discovered '+ALL_SH.length+' data tabs via listSheets');}
+      if(c.fuel.length){
+        FUEL_SH=_union(c.fuel,FUEL_SH); HUB_SH=_union(c.hub,HUB_SH); KHON_SH=_union(c.khon,KHON_SH);
+        ALL_SH=FUEL_SH.concat(HUB_SH).concat(KHON_SH);
+        console.log('[Fleet] discovered+fallback = '+ALL_SH.length+' data tabs');
+      }
     }
     _loadAllSheets();
   });
