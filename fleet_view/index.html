@@ -921,7 +921,7 @@ var TH_M=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','ม�
 function monthLabel(ym){var p=ym.split('-');return TH_M[+p[1]]+' '+p[0];}
 function daysSince(d){return Math.floor((Date.now()-d.getTime())/86400000);}
 function recencyClass(d){var days=daysSince(d);return days===0?'rec-today':days===1?'rec-yesterday':days<=7?'rec-week':days<=30?'rec-month':'rec-old';}
-function recencyLabel(d){var days=daysSince(d);return days===0?'วันนี้':days===1?'เมื่อวาน':days<=30?days+' วัน':Math.floor(days/30)+' เดือน';}
+function recencyLabel(d){var days=Math.max(0,daysSince(d));return days===0?'วันนี้':days===1?'เมื่อวาน':days<=30?days+' วัน':Math.floor(days/30)+' เดือน';}
 function cardAge(d){var days=daysSince(d);return days<=2?'fresh':days<=14?'recent':'old';}
 function isIdle(d){return daysSince(d)>=7;}
 
@@ -1033,7 +1033,11 @@ function aggTrips(trips){
 }
 function latestByPlate(){
   var m={};
-  allTrips.forEach(function(t){if(!m[t.plate]||t.date>m[t.plate].date)m[t.plate]=t;});
+  var maxOk=Date.now()+86400000; // ignore future-dated rows (bad data → negative "idle days")
+  allTrips.forEach(function(t){
+    if(!t.date||t.date.getTime()>maxOk)return;
+    if(!m[t.plate]||t.date>m[t.plate].date)m[t.plate]=t;
+  });
   return m;
 }
 function plateMonthStats(plate, ym){
@@ -1780,7 +1784,7 @@ function renderBoard(){
     var ct=vehicleTypeMap[plate]?customTypes.filter(function(x){return x.id===vehicleTypeMap[plate];})[0]:null;
     var typeBadge=ct?'<div class="board-trip-brief" style="color:'+(TYPE_PALETTE[ct.ci||0][1])+';background:'+(TYPE_PALETTE[ct.ci||0][0])+';border-radius:4px;padding:1px 5px;display:inline-block;margin-top:4px;">'+ct.emoji+' '+ct.name+'</div>':'';
     var driver=t?t.driver:(masterPlates.indexOf(plate)!==-1?'(ไม่มีงานล่าสุด)':'');
-    var idle=t&&isIdle(t.date)&&!st?'<div class="board-idle">หยุด '+daysSince(t.date)+' วัน</div>':'';
+    var idle=t&&isIdle(t.date)&&!st?'<div class="board-idle">หยุด '+Math.max(0,daysSince(t.date))+' วัน</div>':'';
     var note=noteMap[plate]?'<div class="board-note">'+noteMap[plate]+'</div>':'';
     var safePlate=plate.replace(/'/g,"\\'");
     var brief=t?(''+fmtDateShort(t.date)+(t.job?' · '+(t.job.length>22?t.job.slice(0,22)+'…':t.job):'')):'(ยังไม่มีงาน)';
