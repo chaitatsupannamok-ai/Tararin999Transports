@@ -1033,7 +1033,7 @@ function aggTrips(trips){
 }
 function latestByPlate(){
   var m={};
-  var maxOk=Date.now()+86400000; // ignore future-dated rows (bad data → negative "idle days")
+  var maxOk=Date.now()+366*86400000; // ignore only absurd future dates (wrong-year typos like 2404); allow normal jobs planned ahead this month
   allTrips.forEach(function(t){
     if(!t.date||t.date.getTime()>maxOk)return;
     if(!m[t.plate]||t.date>m[t.plate].date)m[t.plate]=t;
