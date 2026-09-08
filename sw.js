@@ -8,7 +8,7 @@
  * via file:// the registration is skipped (see index.html guard). Production on
  * GitHub Pages (https) gets full offline shell caching.
  * ────────────────────────────────────────────────────────────────────────── */
-var CACHE='trr999-shell-v2';
+var CACHE='trr999-shell-v3';
 
 // Same-origin app shell (relative to /project4/).
 var SHELL=[
@@ -28,7 +28,10 @@ var SHELL=[
   './attendance/index.html',
   './dashboard/index.html',
   './trr_gas/index.html',
-  './audit/index.html'
+  './audit/index.html',
+  './spinwheel/index.html',
+  './ui-fx.css',
+  './ui-fx.js'
 ];
 
 self.addEventListener('install',function(e){
