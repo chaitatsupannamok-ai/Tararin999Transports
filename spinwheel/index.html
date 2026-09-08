@@ -63,6 +63,8 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 .win-btns{display:flex;gap:10px;}
 .win-btns .btn{flex:1;justify-content:center;padding:12px;font-size:14px;}
 .empty-hint{color:var(--muted);font-size:13px;text-align:center;padding:30px 10px;}
+.hint{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.5;}
+.hint b{color:var(--primary);}
 .mode-wrap{margin-top:12px;}
 .mode-lbl{display:block;font-size:12px;font-weight:600;color:var(--text2,var(--muted));margin-bottom:5px;}
 #opt-mode{width:100%;padding:9px 11px;border-radius:10px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-family:inherit;font-size:13.5px;outline:none;cursor:pointer;}
@@ -95,7 +97,8 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
     <!-- Names panel -->
     <div class="panel">
       <h2>รายชื่อ <span class="cnt" id="name-count">0</span></h2>
-      <textarea id="names" placeholder="ใส่ชื่อ 1 ชื่อต่อบรรทัด&#10;เช่น&#10;โอม&#10;เบล&#10;ช้างฟาง"></textarea>
+      <textarea id="names" placeholder="ใส่ชื่อ 1 ชื่อต่อบรรทัด&#10;ใส่ x ตามด้วยเลข = ขนาดช่อง (โอกาสมากขึ้น)&#10;เช่น&#10;โอม x3&#10;เบล&#10;ช้างฟาง x2"></textarea>
+      <div class="hint">💡 พิมพ์ <b>ชื่อ x3</b> = ช่องใหญ่ 3 เท่า (โอกาสออกมากขึ้น) · <b>ชื่อ x1</b> หรือไม่ใส่ = ปกติ</div>
       <div class="row">
         <button class="btn" id="btn-shuffle">🔀 สลับ</button>
         <button class="btn" id="btn-drivers">🚛 โหลดชื่อคนขับ</button>
@@ -139,13 +142,15 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 
 <script>
 var canvas=document.getElementById('wheel'), ctx=canvas.getContext('2d');
-var names=[], rot=0, spinning=false, lastWinner=-1, weights=[];
+var names=[], baseWeights=[], rot=0, spinning=false, lastWinner=-1, weights=[];
 var COLORS=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
-// Per-name angular weights (all equal by default; the "กินวง" mode grows one).
-function equalWeights(){return names.map(function(){return 1;});}
+// Base slice sizes per name (user-set, e.g. "A x3" = 3 slices). "reset" restores these.
+function baseW(){if(baseWeights.length!==names.length)return names.map(function(){return 1;});return baseWeights.slice();}
+// weighted winner pick — bigger slice = higher chance
+function pickWinner(){var total=0,i;for(i=0;i<baseWeights.length;i++)total+=baseWeights[i];var r=Math.random()*total,acc=0;for(i=0;i<baseWeights.length;i++){acc+=baseWeights[i];if(r<acc)return i;}return names.length-1;}
 function segBounds(){
   var n=names.length; if(!n)return [];
-  if(!weights||weights.length!==n)weights=equalWeights();
+  if(!weights||weights.length!==n)weights=baseW();
   var total=0,i;for(i=0;i<n;i++)total+=(weights[i]||0.0001);
   var acc=0,out=[];
   for(i=0;i<n;i++){var a0=2*Math.PI*acc/total;acc+=(weights[i]||0.0001);out.push([a0,2*Math.PI*acc/total]);}
@@ -160,10 +165,19 @@ function loadNames(){
   parseNames();
 }
 function parseNames(){
-  names=document.getElementById('names').value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
-  document.getElementById('name-count').textContent=names.length;
+  var lines=document.getElementById('names').value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+  names=[];baseWeights=[];
+  var totalSlices=0;
+  lines.forEach(function(line){
+    // "ชื่อ x3" / "ชื่อ *3" / "ชื่อ ×3" → weight 3 (else 1)
+    var m=line.match(/^(.*?)\s*[x*×]\s*(\d{1,2})\s*$/i);
+    var nm=m?m[1].trim():line, w=m?Math.max(1,Math.min(30,parseInt(m[2],10))):1;
+    if(!nm)return;
+    names.push(nm);baseWeights.push(w);totalSlices+=w;
+  });
+  document.getElementById('name-count').textContent=names.length+(totalSlices!==names.length?(' · '+totalSlices+' ช่อง'):'');
   try{localStorage.setItem('spinwheel_names',document.getElementById('names').value);}catch(e){}
-  if(!spinning)weights=equalWeights();   // reset to equal slices when editing
+  if(!spinning)weights=baseW();   // reset to configured slice sizes when editing
   draw();
 }
 function sizeCanvas(){
@@ -292,10 +306,10 @@ function spin(){
   if(names.length<2){if(window.TRRfx)TRRfx.toast('ใส่ชื่ออย่างน้อย 2 ชื่อ',{type:'warn'});return;}
   audioCtx(); // unlock on user gesture
   spinning=true;
-  weights=equalWeights();   // start every spin with equal slices
+  weights=baseW();   // start every spin with equal slices
   document.getElementById('spinBtn').disabled=true;
   var n=names.length, seg=2*Math.PI/n;
-  var winner=Math.floor(Math.random()*n);
+  var winner=pickWinner();   // weighted by slice size
   var mode=document.getElementById('opt-mode').value;
   if(mode==='random'){var ms=['normal','fakeout','reverse','stutter','teasing','chaos','devour','devourflip','combo','combo','slowreveal','turbo'];mode=ms[Math.floor(Math.random()*ms.length)];}
   if(window.TRRfx)TRRfx.haptic(20);
@@ -304,7 +318,7 @@ function spin(){
   // ── กินวง: spin a bit, then the winner's slice swells to eat almost the whole
   //    wheel, then lands on them. (weight-animated, so handled separately.) ──
   if(mode==='devour'){
-    var eq=equalWeights();
+    var eq=baseW();
     var big=names.map(function(_,idx){return idx===winner?(n*7):0.5;});
     weights=eq.slice();
     animateTo(rotForWinner(winner,rInt(3,5)), rF(2000,2600), easeOut, function(){
@@ -334,7 +348,7 @@ function spin(){
       var pr=Math.random();
       if(pr<0.28){ var d1=randDecoy(cp);cp=d1; tasks.push({idx:d1,spins:rInt(3,6),dur:rF(1700,2500),ease:easeOut,haptic:16}); }
       else if(pr<0.55){ var st=rInt(2,3);for(var q=0;q<st;q++){var d2=randDecoy(cp);cp=d2;tasks.push({idx:d2,spins:q===0?rInt(2,4):rInt(1,2),dur:rF(1200,2000),ease:q===0?easeOut:easeInOut,haptic:14});} }
-      else if(pr<0.8){ var d3=randDecoy(cp);cp=d3; tasks.push({idx:d3,spins:rInt(2,3),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(d3),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.6),haptic:[15,45,15]}); tasks.push({type:'pause',ms:rF(350,650)}); tasks.push({type:'grow',to:equalWeights(),dur:rF(700,1000),addRot:2*Math.PI*rF(0.3,0.6)}); }
+      else if(pr<0.8){ var d3=randDecoy(cp);cp=d3; tasks.push({idx:d3,spins:rInt(2,3),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(d3),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.6),haptic:[15,45,15]}); tasks.push({type:'pause',ms:rF(350,650)}); tasks.push({type:'grow',to:baseW(),dur:rF(700,1000),addRot:2*Math.PI*rF(0.3,0.6)}); }
       else { var d4=randDecoy(cp);cp=d4; var O=seg*rF(0.4,0.9); tasks.push({idx:d4,spins:rInt(3,5),over:O,dur:rF(1800,2500),ease:easeOut}); tasks.push({type:'delta',d:-O,dur:rF(600,900),ease:easeOut,haptic:12}); }
     }
     // finale (random): devour-win / flip-to-sliver / plain creep
@@ -404,11 +418,13 @@ function showWin(name){
   if(document.getElementById('opt-remove').checked){ doRemoveWinner(); rmBtn.style.display='none'; }
   else rmBtn.style.display='';
 }
-function closeWin(){document.getElementById('win-modal').classList.remove('show');if(!spinning){weights=equalWeights();draw();}}
+function closeWin(){document.getElementById('win-modal').classList.remove('show');if(!spinning){weights=baseW();draw();}}
+// Rebuild textarea text from names+baseWeights (keeps the "x3" suffix)
+function linesText(){return names.map(function(nm,i){return baseWeights[i]>1?(nm+' x'+baseWeights[i]):nm;}).join('\n');}
 function doRemoveWinner(){
   if(lastWinner>=0&&lastWinner<names.length){
-    names.splice(lastWinner,1);lastWinner=-1;
-    document.getElementById('names').value=names.join('\n');
+    names.splice(lastWinner,1);baseWeights.splice(lastWinner,1);lastWinner=-1;
+    document.getElementById('names').value=linesText();
     parseNames();
   }
 }
@@ -438,7 +454,7 @@ document.getElementById('names').addEventListener('input',parseNames);
 document.getElementById('spinBtn').addEventListener('click',spin);
 document.getElementById('hub').addEventListener('click',spin);
 document.getElementById('btn-clear').addEventListener('click',function(){document.getElementById('names').value='';parseNames();});
-document.getElementById('btn-shuffle').addEventListener('click',function(){for(var i=names.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=names[i];names[i]=names[j];names[j]=t;}document.getElementById('names').value=names.join('\n');parseNames();});
+document.getElementById('btn-shuffle').addEventListener('click',function(){for(var i=names.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=names[i];names[i]=names[j];names[j]=t;var w=baseWeights[i];baseWeights[i]=baseWeights[j];baseWeights[j]=w;}document.getElementById('names').value=linesText();parseNames();});
 document.getElementById('btn-drivers').addEventListener('click',loadDrivers);
 document.getElementById('win-again').addEventListener('click',function(){closeWin();setTimeout(spin,250);});
 document.getElementById('win-remove').addEventListener('click',removeWinner);

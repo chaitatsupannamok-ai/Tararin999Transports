@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>เกมวงเหล้า — TARARIN 999</title>
+<link rel="icon" type="image/png" href="../TRR999logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>if(localStorage.getItem('trr_dark_mode')==='1')document.documentElement.classList.add('dark');var _a=localStorage.getItem('trr_accent');if(_a&&_a!=='ocean')document.documentElement.setAttribute('data-accent',_a);</script>
+<script>if(window.self!==window.top)document.documentElement.classList.add('in-iframe');</script>
+<link rel="stylesheet" href="../glass.css?v=1">
+<link rel="stylesheet" href="../ui-fx.css?v=1">
+<script src="../ui-fx.js?v=1"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%;animation:pgFade .22s ease;background:linear-gradient(140deg,var(--bg-from) 0%,var(--bg-mid) 50%,var(--bg-to) 100%);background-attachment:fixed;overflow-x:hidden;}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px;}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.head .ico{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
+.head h1{font-size:21px;font-weight:800;}
+.head .snd{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none;}
+.head .snd input{width:16px;height:16px;accent-color:var(--primary);}
+/* game tabs */
+.tabs{display:flex;gap:8px;margin-bottom:20px;}
+.tab{flex:1;padding:12px 6px;border-radius:13px;border:1px solid var(--glass-border-sm);background:var(--glass-bg-card);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.tab .e{font-size:22px;}
+.tab:hover{transform:translateY(-2px);}
+.tab.active{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(31,60,180,.25);}
+.game{display:none;}
+.game.active{display:block;animation:pgFade .25s ease;}
+.stage{background:var(--glass-bg-card);border:1px solid var(--glass-border-sm);border-radius:20px;padding:30px 22px 26px;text-align:center;backdrop-filter:var(--blur);position:relative;overflow:hidden;}
+.big-btn{font-family:inherit;font-size:17px;font-weight:800;padding:15px 44px;border-radius:16px;border:none;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));cursor:pointer;box-shadow:0 8px 22px rgba(31,60,180,.3);transition:transform .15s,box-shadow .15s;letter-spacing:.5px;margin-top:8px;}
+.big-btn:hover:not(:disabled){transform:translateY(-2px);}
+.big-btn:active:not(:disabled){transform:translateY(1px);}
+.big-btn:disabled{opacity:.5;cursor:default;}
+.big-btn.danger{background:linear-gradient(135deg,#dc2626,#b91c1c);box-shadow:0 8px 22px rgba(220,38,38,.35);}
+.hint{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.5;}
+.opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+.opts label{font-size:12px;color:var(--text2,var(--muted));display:flex;align-items:center;gap:6px;}
+.opts select{padding:7px 10px;border-radius:9px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-family:inherit;font-size:13px;}
+
+/* Bomb */
+.bomb{font-size:120px;line-height:1;display:inline-block;transition:transform .1s;filter:drop-shadow(0 8px 16px rgba(0,0,0,.25));}
+.bomb.ticking{animation:bombPulse .4s infinite;}
+@keyframes bombPulse{50%{transform:scale(1.08) rotate(-3deg);}}
+.bomb.fast{animation-duration:.15s;}
+.bomb-status{font-size:16px;font-weight:700;margin:14px 0 4px;min-height:24px;}
+
+/* Gulps */
+.gulp-display{font-size:96px;font-weight:800;line-height:1.05;color:var(--primary);min-height:110px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.gulp-display .unit{font-size:20px;color:var(--muted);font-weight:600;}
+.gulp-display.special{font-size:40px;}
+
+/* Roulette */
+.cyl{position:relative;width:200px;height:200px;margin:6px auto 4px;}
+.cyl .chamber{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--glass-bg-subtle);border:2px solid var(--glass-border-sm);transform:translate(-50%,-50%);transition:background .15s,border-color .15s;}
+.cyl .chamber.hot{background:#dc2626;border-color:#fca5a5;}
+.cyl .chamber.cur{box-shadow:0 0 0 4px var(--accent);}
+.cyl .barrel{position:absolute;top:50%;left:50%;width:56px;height:56px;border-radius:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;}
+.roul-status{font-size:17px;font-weight:700;margin:12px 0 2px;min-height:24px;}
+.streak{font-size:12.5px;color:var(--muted);}
+
+/* result flash overlay */
+#flash{position:fixed;inset:0;background:#dc2626;opacity:0;pointer-events:none;z-index:500;transition:opacity .08s;}
+#flash.on{opacity:.55;}
+.shake{animation:shk .5s cubic-bezier(.36,.07,.19,.97);}
+@keyframes shk{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(6px)}30%,50%,70%{transform:translateX(-11px)}40%,60%{transform:translateX(11px)}}
+
+/* Roulette fullscreen — real revolver */
+#roul-fs{display:none;position:fixed;inset:0;z-index:600;background:radial-gradient(circle at 50% 28%,#1c2432,#080b10);flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;}
+#roul-fs.show{display:flex;}
+.fs-close{position:absolute;top:16px;right:18px;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:#fff;font-size:18px;cursor:pointer;}
+.fs-close:hover{background:rgba(255,255,255,.22);}
+.fs-title{color:#e5e7eb;font-size:18px;font-weight:800;letter-spacing:1.5px;}
+.fs-gunwrap{position:relative;width:min(90vw,540px);}
+#fs-gun{width:100%;height:auto;filter:drop-shadow(0 22px 40px rgba(0,0,0,.6));}
+#fs-cyl{transform-box:fill-box;transform-origin:center;}
+.fs-gunwrap.recoil{animation:recoil .28s ease;}
+@keyframes recoil{30%{transform:translateX(30px) rotate(2.5deg);}100%{transform:none;}}
+.fs-status{color:#fff;font-size:18px;font-weight:700;min-height:26px;text-align:center;}
+.fs-streak{color:#9ca3af;font-size:13px;min-height:18px;}
+.fs-trigger{font-family:inherit;font-size:19px;font-weight:800;padding:15px 50px;border-radius:16px;border:none;color:#fff;background:linear-gradient(135deg,#dc2626,#991b1b);cursor:pointer;box-shadow:0 8px 26px rgba(220,38,38,.4);letter-spacing:1px;}
+.fs-trigger:active:not(:disabled){transform:translateY(2px);}
+.fs-trigger:disabled{opacity:.5;cursor:default;}
+.fs-opts{display:flex;gap:14px;}
+.fs-opts label{color:#cbd5e1;font-size:13px;display:flex;align-items:center;gap:6px;}
+.fs-opts select{padding:7px 10px;border-radius:9px;border:1px solid #3a4048;background:#1a1f26;color:#fff;font-family:inherit;font-size:13px;}
+</style>
+</head>
+<body>
+<div id="flash"></div>
+<div class="wrap">
+  <div class="head">
+    <span class="ico">🍻</span>
+    <h1>เกมวงเหล้า</h1>
+    <label class="snd"><input type="checkbox" id="snd" checked> 🔊 เสียง</label>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-g="bomb" onclick="showGame('bomb',this)"><span class="e">💣</span>บอมบ์ส่งต่อ</button>
+    <button class="tab" data-g="gulp" onclick="showGame('gulp',this)"><span class="e">🍺</span>สุ่มจำนวนอึก</button>
+    <button class="tab" data-g="roul" onclick="showGame('roul',this)"><span class="e">🔫</span>รูเล็ตรัสเซีย</button>
+  </div>
+
+  <!-- BOMB -->
+  <div class="game active" id="game-bomb">
+    <div class="stage" id="bomb-stage">
+      <div class="bomb" id="bomb">💣</div>
+      <div class="bomb-status" id="bomb-status">กดจุดชนวน แล้วส่งต่อกันไปเรื่อยๆ</div>
+      <button class="big-btn danger" id="bomb-btn" onclick="bombArm()">🔥 จุดชนวน</button>
+      <div class="hint">ระเบิดเมื่อไหร่ไม่มีใครรู้ (5-30 วิ) · เสียงติ๊กจะถี่ขึ้นเรื่อยๆ · ใครถืออยู่ตอนระเบิด = ดื่ม!</div>
+    </div>
+  </div>
+
+  <!-- GULPS -->
+  <div class="game" id="game-gulp">
+    <div class="stage">
+      <div class="gulp-display" id="gulp-display">🍺</div>
+      <button class="big-btn" id="gulp-btn" onclick="gulpRoll()">🎲 สุ่มจำนวนอึก</button>
+      <div class="hint">สุ่มว่าต้องดื่มกี่อึก · มีช่องพิเศษ: ปลอดภัย / ทุกคนดื่ม / ดื่มรัว / ส่งต่อ</div>
+    </div>
+  </div>
+
+  <!-- ROULETTE -->
+  <div class="game" id="game-roul">
+    <div class="stage" id="roul-stage">
+      <div class="cyl" id="cyl"></div>
+      <div class="roul-status" id="roul-status">หมุนลูกโม่แล้วลั่นไก...</div>
+      <div class="streak" id="roul-streak"></div>
+      <div class="opts" style="margin-top:2px;margin-bottom:14px;">
+        <button class="big-btn" style="padding:9px 18px;font-size:13px;margin:0;" onclick="roulOpenFS()">⛶ ขยายเต็มจอ (ปืนจริง)</button>
+      </div>
+      <button class="big-btn danger" id="roul-btn" onclick="roulPull()">🔫 ลั่นไก</button>
+      <div class="opts">
+        <label>ช่อง <select id="roul-chambers"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option></select></label>
+        <label>กระสุน <select id="roul-bullets"><option selected>1</option><option>2</option><option>3</option></select></label>
+      </div>
+      <div class="hint">เสี่ยงดวง! โดนกระสุน = ดื่มรัว 🔥 · รอดไปเรื่อยๆ ยิ่งลุ้น · กด "ขยายเต็มจอ" เล่นแบบปืนจริง</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Roulette fullscreen (real revolver) ── -->
+<div id="roul-fs">
+  <button class="fs-close" onclick="roulCloseFS()" aria-label="ปิด">✕</button>
+  <div class="fs-title">รูเล็ตรัสเซีย</div>
+  <div class="fs-gunwrap" id="fs-gunwrap">
+    <svg id="fs-gun" viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="mtl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b636e"/><stop offset="0.5" stop-color="#2b3038"/><stop offset="1" stop-color="#151a20"/></linearGradient>
+        <linearGradient id="mtl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b7280"/><stop offset="1" stop-color="#20252c"/></linearGradient>
+        <radialGradient id="cylg" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#7a828d"/><stop offset="0.6" stop-color="#3a4048"/><stop offset="1" stop-color="#12161b"/></radialGradient>
+        <linearGradient id="grip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6b4a2f"/><stop offset="1" stop-color="#3a2618"/></linearGradient>
+        <radialGradient id="flashg" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff8d0"/><stop offset="0.4" stop-color="#ffd23f"/><stop offset="0.8" stop-color="#ff7a00"/><stop offset="1" stop-color="#ff7a00" stop-opacity="0"/></radialGradient>
+      </defs>
+      <!-- muzzle flash (hidden) -->
+      <g id="fs-flash" opacity="0"><path d="M300 150 L360 120 L338 150 L372 138 L344 152 L372 166 L338 152 L360 182 Z" fill="url(#flashg)"/><circle cx="308" cy="151" r="26" fill="url(#flashg)"/></g>
+      <!-- barrel -->
+      <rect x="150" y="132" width="165" height="30" rx="5" fill="url(#mtl)"/>
+      <rect x="150" y="128" width="150" height="9" rx="4" fill="url(#mtl2)"/>
+      <rect x="305" y="128" width="12" height="40" rx="3" fill="#0e1216"/>
+      <!-- frame under cylinder -->
+      <path d="M120 120 h70 v70 h-70 q-14 0 -14 -18 v-34 q0 -18 14 -18 z" fill="url(#mtl)"/>
+      <!-- grip -->
+      <path d="M112 178 q-10 62 -44 96 q-10 8 -20 2 q10 -70 34 -104 z" fill="url(#grip)" stroke="#241608" stroke-width="2"/>
+      <!-- trigger guard + trigger -->
+      <path d="M120 190 q26 26 54 20 q-6 18 -30 16 q-24 -2 -30 -20 z" fill="none" stroke="url(#mtl)" stroke-width="8"/>
+      <path d="M138 196 q8 12 2 22 q-10 -2 -12 -14 z" fill="#20252c"/>
+      <!-- hammer -->
+      <path id="fs-hammer" d="M118 118 q-6 -22 -20 -26 q-10 -2 -10 8 q10 4 14 20 z" fill="url(#mtl2)"/>
+      <!-- cylinder -->
+      <g id="fs-cyl">
+        <circle cx="120" cy="155" r="56" fill="url(#cylg)" stroke="#0d1115" stroke-width="4"/>
+        <circle cx="120" cy="155" r="56" fill="none" stroke="#8a929c" stroke-width="1.5" opacity="0.5"/>
+        <g id="fs-holes"></g>
+        <circle cx="120" cy="155" r="9" fill="#12161b" stroke="#565e68" stroke-width="2"/>
+      </g>
+      <!-- firing-position marker (static) -->
+      <path d="M120 86 l11 17 h-22 z" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <div class="fs-status" id="fs-status">หมุนโม่แล้วลั่นไก</div>
+  <div class="fs-streak" id="fs-streak"></div>
+  <button class="fs-trigger" id="fs-trigger" onclick="fsFire()">🔫 ลั่นไก</button>
+  <div class="fs-opts">
+    <label>ช่อง <select id="fs-chambers"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option></select></label>
+    <label>กระสุน <select id="fs-bullets"><option selected>1</option><option>2</option><option>3</option></select></label>
+  </div>
+</div>
+
+<script>
+// ── Sound (WebAudio) ──
+var _ac=null;
+function ac(){if(!_ac){try{_ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(_ac&&_ac.state==='suspended')_ac.resume();return _ac;}
+function sndOn(){var e=document.getElementById('snd');return !e||e.checked;}
+function beep(f,d,t,v){var a=_ac;if(!a||!sndOn())return;try{var o=a.createOscillator(),g=a.createGain();o.type=t||'square';o.frequency.value=f;var tt=a.currentTime;g.gain.setValueAtTime(v||0.06,tt);g.gain.exponentialRampToValueAtTime(0.0001,tt+(d||0.05));o.connect(g);g.connect(a.destination);o.start(tt);o.stop(tt+(d||0.05));}catch(e){}}
+function noise(d,v){var a=_ac;if(!a||!sndOn())return;try{var n=Math.floor(a.sampleRate*(d||0.3)),buf=a.createBuffer(1,n,a.sampleRate),c=buf.getChannelData(0);for(var i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);var s=a.createBufferSource();s.buffer=buf;var g=a.createGain();g.gain.value=v||0.4;s.connect(g);g.connect(a.destination);s.start();}catch(e){}}
+function boom(){noise(0.55,0.7);beep(64,0.55,'sawtooth',0.18);}
+function tada(){[0,4,7,12,16].forEach(function(st,i){setTimeout(function(){beep(392*Math.pow(2,st/12),0.2,'triangle',0.08);},i*90);});}
+function hap(p){if(window.TRRfx)TRRfx.haptic(p);}
+function flash(){var f=document.getElementById('flash');f.classList.add('on');setTimeout(function(){f.classList.remove('on');},130);}
+function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+
+// ── Tabs ──
+function showGame(g,btn){
+  document.querySelectorAll('.game').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('game-'+g).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  if(g==='roul')buildCyl();
+  try{localStorage.setItem('games_last',g);}catch(e){}
+}
+
+// ══ 1) BOMB ══════════════════════════════════════════════
+var bombRunning=false,bombTimer=null,bombTickT=null;
+function bombArm(){
+  if(bombRunning)return; ac();
+  bombRunning=true;
+  var btn=document.getElementById('bomb-btn'), bomb=document.getElementById('bomb'), st=document.getElementById('bomb-status');
+  btn.disabled=true; btn.textContent='⏳ กำลังจับเวลา...';
+  st.textContent='ส่งต่อเร็ว! 💨';
+  bomb.classList.add('ticking');
+  var dur=5000+Math.random()*25000;      // 5–30s, hidden
+  var start=Date.now();
+  function tick(){
+    var el=Date.now()-start, p=el/dur;
+    if(p>=1){explode();return;}
+    beep(600+p*900,0.03,'square',0.05); hap(3);
+    if(p>0.75)bomb.classList.add('fast');
+    var iv=Math.max(70, 480*(1-p)+70);   // faster as it nears the end
+    bombTickT=setTimeout(tick,iv);
+  }
+  bombTickT=setTimeout(tick,400);
+}
+function explode(){
+  var btn=document.getElementById('bomb-btn'), bomb=document.getElementById('bomb'), st=document.getElementById('bomb-status');
+  bomb.classList.remove('ticking','fast'); bomb.textContent='💥';
+  st.textContent='💥 ระเบิด! คนถืออยู่ดื่มเลย!';
+  boom(); hap([60,40,120]); flash(); shake(document.getElementById('bomb-stage'));
+  if(window.TRRfx)TRRfx.confetti({count:90,colors:['#dc2626','#f97316','#fbbf24']});
+  setTimeout(function(){
+    bomb.textContent='💣'; bombRunning=false; btn.disabled=false; btn.textContent='🔥 จุดชนวนอีกรอบ';
+    st.textContent='กดจุดชนวน แล้วส่งต่อกันไปเรื่อยๆ';
+  },2600);
+}
+
+// ══ 2) GULPS ═════════════════════════════════════════════
+var GULP=[
+  {t:'1',u:'อึก',w:14},{t:'2',u:'อึก',w:16},{t:'3',u:'อึก',w:14},{t:'4',u:'อึก',w:10},
+  {t:'5',u:'อึก',w:7},{t:'6',u:'อึก',w:4},
+  {t:'😎 ปลอดภัย',u:'',w:9,sp:1},{t:'🍻 ทุกคนดื่ม!',u:'',w:6,sp:1},
+  {t:'🔥 ดื่มรัว',u:'',w:5,sp:1},{t:'👉 ส่งให้คนข้างๆ',u:'',w:6,sp:1},{t:'🤝 จับคู่ดื่ม',u:'',w:5,sp:1}
+];
+var gulpRunning=false;
+function gulpPick(){var tot=0,i;for(i=0;i<GULP.length;i++)tot+=GULP[i].w;var r=Math.random()*tot,a=0;for(i=0;i<GULP.length;i++){a+=GULP[i].w;if(r<a)return GULP[i];}return GULP[0];}
+function gulpRoll(){
+  if(gulpRunning)return; ac(); gulpRunning=true;
+  var btn=document.getElementById('gulp-btn'), disp=document.getElementById('gulp-display');
+  btn.disabled=true;
+  var final=gulpPick(), t0=Date.now(), dur=1600+Math.random()*700;
+  function render(o,big){disp.classList.toggle('special',!!o.sp&&!big);disp.innerHTML=o.sp?o.t:(o.t+'<span class="unit">'+o.u+'</span>');}
+  function step(){
+    var p=(Date.now()-t0)/dur;
+    if(p>=1){
+      render(final); disp.classList.toggle('special',!!final.sp);
+      beep(880,0.15,'triangle',0.09); hap([20,40,20]);
+      if(final.sp){tada();if(window.TRRfx)TRRfx.confetti({count:90});}
+      gulpRunning=false; btn.disabled=false; return;
+    }
+    render(gulpPick(),true); beep(500+Math.random()*400,0.02,'square',0.04);
+    setTimeout(step, 60+p*p*260);   // slow down (slot-machine)
+  }
+  step();
+}
+
+// ══ 3) ROULETTE ══════════════════════════════════════════
+var roulBusy=false, roulStreak=0;
+function buildCyl(){
+  var n=parseInt(document.getElementById('roul-chambers').value,10);
+  var cyl=document.getElementById('cyl'); cyl.innerHTML='<div class="barrel">🔫</div>';
+  var R=82, cx=100, cy=100;
+  for(var i=0;i<n;i++){
+    var ang=-Math.PI/2+i*2*Math.PI/n;
+    var d=document.createElement('div');d.className='chamber';d.id='ch'+i;
+    d.style.left=(cx+Math.cos(ang)*R)+'px';d.style.top=(cy+Math.sin(ang)*R)+'px';
+    cyl.appendChild(d);
+  }
+}
+function roulPull(){
+  if(roulBusy)return; ac(); roulBusy=true;
+  var n=parseInt(document.getElementById('roul-chambers').value,10);
+  var bullets=parseInt(document.getElementById('roul-bullets').value,10);
+  var btn=document.getElementById('roul-btn'), st=document.getElementById('roul-status');
+  btn.disabled=true; st.textContent='หมุนลูกโม่... 😰';
+  // clear hot
+  for(var c=0;c<n;c++){var e=document.getElementById('ch'+c);if(e)e.classList.remove('hot','cur');}
+  var hit = Math.random() < (bullets/n);
+  var spins=n*2+Math.floor(Math.random()*n), cur=0, i=0, t0=Date.now(), dur=1800+Math.random()*700;
+  function step(){
+    var prev=document.getElementById('ch'+((cur-1+n)%n)); if(prev)prev.classList.remove('cur');
+    var e=document.getElementById('ch'+cur); if(e)e.classList.add('cur');
+    beep(300,0.03,'square',0.05); hap(4);
+    cur=(cur+1)%n; i++;
+    var p=Math.min((Date.now()-t0)/dur,1);
+    if(i>=spins && p>=1){ setTimeout(function(){roulResolve(hit,n);}, 250); return; }
+    setTimeout(step, 60+p*p*220);
+  }
+  step();
+}
+function roulResolve(hit,n){
+  var btn=document.getElementById('roul-btn'), st=document.getElementById('roul-status'), stk=document.getElementById('roul-streak');
+  var curEl=document.querySelector('.chamber.cur');
+  if(hit){
+    if(curEl)curEl.classList.add('hot');
+    st.textContent='💥 ปัง! โดนแล้ว — ดื่มรัวเลย 🔥';
+    boom(); hap([60,40,120]); flash(); shake(document.getElementById('roul-stage'));
+    if(window.TRRfx)TRRfx.confetti({count:80,colors:['#dc2626','#f97316','#fbbf24']});
+    roulStreak=0; stk.textContent='';
+  } else {
+    st.textContent='😅 รอด! ส่งต่อคนถัดไป';
+    beep(700,0.12,'triangle',0.08); beep(900,0.12,'triangle',0.07); hap(30);
+    roulStreak++; stk.textContent='รอดติดต่อกัน '+roulStreak+' ครั้ง 😎';
+  }
+  btn.disabled=false;roulBusy=false;
+}
+
+// ══ Roulette FULLSCREEN (real revolver) ══════════════════
+var fsBusy=false, fsRot=0, fsLastIdx=-1, fsStreak=0;
+var SVGNS='http://www.w3.org/2000/svg';
+function fsBuildHoles(){
+  var n=parseInt(document.getElementById('fs-chambers').value,10);
+  var g=document.getElementById('fs-holes'); g.innerHTML='';
+  var cx=120,cy=155, r=(n<=6?36:n<=10?39:41), hr=(n<=6?12:n<=10?9:n<=16?6.5:5);
+  for(var i=0;i<n;i++){
+    var ang=-Math.PI/2+i*2*Math.PI/n, x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
+    var c=document.createElementNS(SVGNS,'circle');
+    c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',hr);
+    c.setAttribute('fill','#0c0f13');c.setAttribute('stroke','#565e68');c.setAttribute('stroke-width','2');c.setAttribute('id','fsh'+i);
+    g.appendChild(c);
+  }
+  fsRot=0; document.getElementById('fs-cyl').style.transform='rotate(0deg)';
+}
+function roulOpenFS(){
+  ac();
+  document.getElementById('fs-chambers').value=document.getElementById('roul-chambers').value;
+  document.getElementById('fs-bullets').value=document.getElementById('roul-bullets').value;
+  fsBuildHoles(); fsStreak=0;
+  document.getElementById('fs-status').textContent='หมุนโม่แล้วลั่นไก';
+  document.getElementById('fs-streak').textContent='';
+  document.getElementById('roul-fs').classList.add('show');
+}
+function roulCloseFS(){ document.getElementById('roul-fs').classList.remove('show'); }
+function fsFire(){
+  if(fsBusy)return; ac(); fsBusy=true;
+  var n=parseInt(document.getElementById('fs-chambers').value,10);
+  var bullets=parseInt(document.getElementById('fs-bullets').value,10);
+  var btn=document.getElementById('fs-trigger'), st=document.getElementById('fs-status'), cyl=document.getElementById('fs-cyl');
+  btn.disabled=true; st.textContent='หมุนโม่... 😰';
+  for(var c=0;c<n;c++){var e=document.getElementById('fsh'+c);if(e){e.setAttribute('fill','#0c0f13');e.setAttribute('stroke','#565e68');}}
+  var hit=Math.random()<(bullets/n);
+  var stepDeg=360/n, landHole=Math.floor(Math.random()*n);
+  var turns=3+Math.floor(Math.random()*3);
+  var target=turns*360 - landHole*stepDeg + (Math.random()*6-3);
+  var start=fsRot, t0=null, dur=1700+Math.random()*1000;
+  function step(ts){
+    if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1), e=1-Math.pow(1-p,3);
+    fsRot=start+(target-start)*e; cyl.style.transform='rotate('+fsRot+'deg)';
+    var idx=Math.floor((((-fsRot/stepDeg)%n)+n)%n);
+    if(idx!==fsLastIdx){fsLastIdx=idx;beep(300,0.03,'square',0.05);hap(4);}
+    if(p<1)requestAnimationFrame(step);
+    else{fsRot=((target%360)+360)%360;cyl.style.transform='rotate('+fsRot+'deg)';setTimeout(function(){fsResolve(hit,landHole);},220);}
+  }
+  requestAnimationFrame(step);
+}
+function fsResolve(hit,landHole){
+  var btn=document.getElementById('fs-trigger'), st=document.getElementById('fs-status'), stk=document.getElementById('fs-streak');
+  var hole=document.getElementById('fsh'+landHole);
+  if(hit){
+    if(hole){hole.setAttribute('fill','#dc2626');hole.setAttribute('stroke','#fecaca');}
+    st.textContent='💥 ปัง! โดนแล้ว — ดื่มรัวเลย 🔥';
+    // muzzle flash + recoil + boom
+    var fl=document.getElementById('fs-flash'), gw=document.getElementById('fs-gunwrap');
+    fl.setAttribute('opacity','1'); gw.classList.remove('recoil');void gw.offsetWidth;gw.classList.add('recoil');
+    boom(); hap([70,40,140]); flash();
+    if(window.TRRfx)TRRfx.confetti({count:90,colors:['#dc2626','#f97316','#fbbf24']});
+    setTimeout(function(){fl.setAttribute('opacity','0');},180);
+    fsStreak=0; stk.textContent='';
+  } else {
+    st.textContent='😅 รอด! ส่งต่อคนถัดไป';
+    beep(680,0.12,'triangle',0.08); beep(880,0.12,'triangle',0.07); hap(30);
+    fsStreak++; stk.textContent='รอดติดต่อกัน '+fsStreak+' ครั้ง 😎';
+  }
+  btn.disabled=false; fsBusy=false;
+}
+document.getElementById('fs-chambers').addEventListener('change',function(){document.getElementById('roul-chambers').value=this.value;fsBuildHoles();});
+document.getElementById('fs-bullets').addEventListener('change',function(){document.getElementById('roul-bullets').value=this.value;});
+
+// init
+(function(){
+  try{var sd=localStorage.getItem('games_snd');if(sd!==null)document.getElementById('snd').checked=(sd==='1');}catch(e){}
+  document.getElementById('snd').addEventListener('change',function(){try{localStorage.setItem('games_snd',this.checked?'1':'0');}catch(e){}});
+  document.getElementById('roul-chambers').addEventListener('change',buildCyl);
+  buildCyl();
+  var last='bomb';try{last=localStorage.getItem('games_last')||'bomb';}catch(e){}
+  var tb=document.querySelector('.tab[data-g="'+last+'"]'); if(tb&&last!=='bomb')showGame(last,tb);
+})();
+</script>
+</body>
+</html>
