@@ -310,7 +310,7 @@ function spin(){
     animateTo(rotForWinner(winner,rInt(3,5)), rF(2000,2600), easeOut, function(){
       if(window.TRRfx)TRRfx.haptic([15,45,15]);
       animateWeights(eq, big, rF(1100,1500), 2*Math.PI*rF(0.5,0.9), function(){
-        animateTo(rotForWinner(winner,0), rF(750,1050), easeInOut, finish);
+        animateTo(rotForWinner(winner,0), rF(1250,1750), easeIn4, finish);
       });
     });
     return;
@@ -323,7 +323,7 @@ function spin(){
       {idx:vd,spins:rInt(3,5),dur:rF(2000,2600),ease:easeOut},
       {type:'grow',to:bigWeights(vd),dur:rF(1000,1400),addRot:2*Math.PI*rF(0.4,0.7),haptic:[15,45,15]},
       {type:'pause',ms:rF(500,850)},
-      {idx:winner,spins:0,dur:rF(1000,1400),ease:easeInOut,haptic:[10,70,10]}   // creep onto the sliver
+      {idx:winner,spins:0,dur:rF(1500,2000),ease:easeIn4,haptic:[10,70,10]}   // creep onto the sliver (slow)
     ],0,finish);
     return;
   }
@@ -339,9 +339,9 @@ function spin(){
     }
     // finale (random): devour-win / flip-to-sliver / plain creep
     var fr=Math.random();
-    if(fr<0.34){ tasks.push({idx:winner,spins:rInt(1,2),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(winner),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.6),haptic:[15,45,15]}); tasks.push({idx:winner,spins:0,dur:rF(700,1000),ease:easeInOut,haptic:[10,60,10]}); }
-    else if(fr<0.6){ var fd=randDecoy(winner); tasks.push({idx:fd,spins:rInt(1,2),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(fd),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.5),haptic:[15,45,15]}); tasks.push({type:'pause',ms:rF(400,700)}); tasks.push({idx:winner,spins:0,dur:rF(900,1300),ease:easeInOut,haptic:[10,70,10]}); }
-    else { tasks.push({idx:winner,spins:rInt(1,2),dur:rF(2000,2800),ease:easeOut,haptic:[10,50,10]}); }
+    if(fr<0.34){ tasks.push({idx:winner,spins:rInt(1,2),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(winner),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.6),haptic:[15,45,15]}); tasks.push({idx:winner,spins:0,dur:rF(1200,1650),ease:easeIn4,haptic:[10,60,10]}); }
+    else if(fr<0.6){ var fd=randDecoy(winner); tasks.push({idx:fd,spins:rInt(1,2),dur:rF(1300,1900),ease:easeOut}); tasks.push({type:'grow',to:bigWeights(fd),dur:rF(900,1200),addRot:2*Math.PI*rF(0.3,0.5),haptic:[15,45,15]}); tasks.push({type:'pause',ms:rF(400,700)}); tasks.push({idx:winner,spins:0,dur:rF(1350,1800),ease:easeIn4,haptic:[10,70,10]}); }
+    else { tasks.push({idx:winner,spins:rInt(1,2),dur:rF(2400,3100),ease:easeIn4,haptic:[10,50,10]}); }
     runSteps(tasks,0,finish);
     return;
   }
@@ -352,14 +352,14 @@ function spin(){
     var fakes=rInt(1,3); prev=winner;
     var d0=randDecoy(winner); steps.push({idx:d0,spins:rInt(4,6),dur:rF(2800,3500)}); prev=d0;
     for(i=1;i<fakes;i++){var d=randDecoy(prev);steps.push({idx:d,spins:0,dur:rF(900,1500),pause:rF(450,800),ease:easeInOut,haptic:[10,50,10]});prev=d;}
-    steps.push({idx:winner,spins:0,dur:rF(1200,1800),pause:rF(550,850),ease:easeInOut,haptic:[10,70,10]});
+    steps.push({idx:winner,spins:0,dur:rF(1600,2200),pause:rF(550,850),ease:easeIn4,haptic:[10,70,10]});
   }
   else if(mode==='reverse'){
     // overshoot then bounce back; sometimes a 2nd smaller bounce
     wRot=rotForWinner(winner,rInt(5,7));
     steps.push({abs:wRot+seg*rF(0.5,1.1),dur:rF(3000,3800),ease:easeOut});
-    steps.push({abs:wRot,dur:rF(700,950),ease:easeOut});
-    if(rInt(0,1)){steps.push({abs:wRot+seg*rF(0.25,0.6),dur:rF(450,700),ease:easeOut,haptic:12});steps.push({abs:wRot,dur:rF(500,800),ease:easeOut});}
+    if(rInt(0,1)){steps.push({abs:wRot,dur:rF(750,1000),ease:easeOut});steps.push({abs:wRot+seg*rF(0.25,0.6),dur:rF(450,700),ease:easeOut,haptic:12});}
+    steps.push({abs:wRot,dur:rF(1050,1450),ease:easeIn4});   // slow final settle
   }
   else if(mode==='stutter'){
     // 2–4 slowdown stops (random count/timing) then winner
@@ -372,8 +372,8 @@ function spin(){
     wRot=rotForWinner(winner,rInt(4,6)); pre=wRot-seg*rF(0.4,0.6);
     steps.push({abs:pre,dur:rF(2800,3500),ease:easeOut});
     k=rInt(2,4);
-    for(i=1;i<=k;i++){steps.push({abs:pre+(wRot-pre)*(i/(k+1)),dur:rF(350,650),ease:easeInOut,pause:rF(140,320),haptic:8});}
-    steps.push({abs:wRot,dur:rF(450,750),ease:easeInOut,pause:rF(140,300),haptic:[8,40,8]});
+    for(i=1;i<=k;i++){steps.push({abs:pre+(wRot-pre)*(i/(k+1)),dur:rF(380,680),ease:easeInOut,pause:rF(150,340),haptic:8});}
+    steps.push({abs:wRot,dur:rF(900,1350),ease:easeIn4,pause:rF(160,320),haptic:[8,40,8]});   // slow final creep
   }
   else if(mode==='chaos'){
     // fully unpredictable: 3–6 random stages, random dirs/pauses, then winner
