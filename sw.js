@@ -8,7 +8,7 @@
  * via file:// the registration is skipped (see index.html guard). Production on
  * GitHub Pages (https) gets full offline shell caching.
  * ────────────────────────────────────────────────────────────────────────── */
-var CACHE='trr999-shell-v9';
+var CACHE='trr999-shell-v16';
 
 // Same-origin app shell (relative to /project4/).
 var SHELL=[
@@ -32,6 +32,7 @@ var SHELL=[
   './spinwheel/index.html',
   './games/index.html',
   './tycoon/index.html',
+  './roulette/index.html',
   './ui-fx.css',
   './ui-fx.js'
 ];

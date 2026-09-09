@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Roulette Wheel — TARARIN 999</title>
+<link rel="icon" type="image/png" href="../TRR999logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>if(localStorage.getItem('trr_dark_mode')==='1')document.documentElement.classList.add('dark');var _a=localStorage.getItem('trr_accent');if(_a&&_a!=='ocean')document.documentElement.setAttribute('data-accent',_a);</script>
+<script>if(window.self!==window.top)document.documentElement.classList.add('in-iframe');</script>
+<link rel="stylesheet" href="../glass.css?v=1">
+<link rel="stylesheet" href="../ui-fx.css?v=1">
+<script src="../ui-fx.js?v=1"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%;animation:pgFade .22s ease;background:linear-gradient(140deg,var(--bg-from) 0%,var(--bg-mid) 50%,var(--bg-to) 100%);background-attachment:fixed;}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 16px 60px;}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.head .ico{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#7c2d12,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
+.head h1{font-size:21px;font-weight:800;color:var(--text);}
+.head .sub{color:var(--muted);font-size:12.5px;}
+.expand-btn{font-family:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;border:1px solid var(--glass-border-sm);background:var(--glass-bg-subtle);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-left:auto;transition:.15s;}
+.expand-btn:hover{background:var(--sb-item-hover);transform:translateY(-1px);}
+
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start;}
+@media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+.wheel-box{display:flex;flex-direction:column;align-items:center;gap:16px;}
+.wheel-stage{position:relative;width:100%;max-width:480px;aspect-ratio:1;}
+#wheel{width:100%;height:100%;display:block;filter:drop-shadow(0 14px 34px rgba(15,23,42,.32));border-radius:50%;}
+.wheel-pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:4;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));}
+.wheel-pointer svg{width:34px;height:34px;color:#fbbf24;}
+.spin-btn{font-family:inherit;font-size:17px;font-weight:800;padding:14px 46px;border-radius:14px;border:none;color:#fff;background:linear-gradient(135deg,#166534,#7c2d12);cursor:pointer;box-shadow:0 8px 22px rgba(22,101,52,.35);transition:transform .15s,box-shadow .15s;letter-spacing:.5px;}
+.spin-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 30px rgba(22,101,52,.45);}
+.spin-btn:active:not(:disabled){transform:translateY(0);}
+.spin-btn:disabled{opacity:.5;cursor:default;}
+
+.panel{background:var(--glass-bg-card);border:1px solid var(--glass-border-sm);border-radius:16px;padding:16px;backdrop-filter:var(--blur);}
+.panel h2{font-size:13px;font-weight:700;color:var(--text2,var(--muted));text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.panel h2 .cnt{margin-left:auto;font-size:12px;font-weight:700;color:var(--primary);background:var(--badge-bg);padding:2px 10px;border-radius:20px;}
+#names{width:100%;min-height:210px;resize:vertical;padding:12px 13px;border-radius:11px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-family:inherit;font-size:15px;line-height:1.75;outline:none;}
+#names:focus{border-color:var(--input-focus);}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.btn{font-family:inherit;font-size:13px;font-weight:600;padding:9px 14px;border-radius:10px;border:1px solid var(--glass-border-sm);background:var(--glass-bg-subtle);color:var(--text);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:var(--sb-item-hover);transform:translateY(-1px);}
+.opt{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--text2,var(--muted));cursor:pointer;user-select:none;}
+.opt input{width:17px;height:17px;accent-color:var(--primary);cursor:pointer;}
+.hint{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5;}
+.hint b{color:var(--primary);}
+.hist{margin-top:16px;}
+.hist-row{display:flex;flex-wrap:wrap;gap:6px;}
+.hchip{font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:20px;background:var(--glass-bg-subtle);border:1px solid var(--glass-border-sm);color:var(--text);display:flex;align-items:center;gap:5px;}
+.hchip .n{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;}
+.hchip .n.red{background:#c81e1e;}.hchip .n.black{background:#333;}.hchip .n.green{background:#158a3a;}
+.hist-empty{font-size:12.5px;color:var(--muted);}
+
+#win-modal{display:none;position:fixed;inset:0;z-index:700;background:rgba(15,23,42,.55);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:22px;animation:pgFade .18s ease;}
+#win-modal.show{display:flex;}
+.win-box{background:linear-gradient(160deg,#14251a,#2a1810);border:1px solid rgba(251,191,36,.45);border-radius:24px;padding:32px 30px;text-align:center;max-width:440px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.55);animation:winPop .4s cubic-bezier(.22,1.3,.5,1);}
+@keyframes winPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
+.win-box .wnum{font-size:30px;font-weight:800;line-height:1;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;margin:0 auto 8px;border:2px solid rgba(255,255,255,.5);box-shadow:0 6px 18px rgba(0,0,0,.4);}
+.win-box .wnum.red{background:linear-gradient(145deg,#ef4444,#b91c1c);}
+.win-box .wnum.black{background:linear-gradient(145deg,#374151,#111827);}
+.win-box .wnum.green{background:linear-gradient(145deg,#22c55e,#15803d);}
+.win-box .lbl{font-size:13px;color:#fcd34d;font-weight:600;letter-spacing:.5px;}
+.win-box .name{font-size:32px;font-weight:800;color:#fff;margin:6px 0 22px;line-height:1.2;word-break:break-word;}
+.win-box .big-btn{font-family:inherit;font-size:16px;font-weight:800;padding:13px 40px;border-radius:14px;border:none;color:#fff;background:linear-gradient(135deg,#f59e0b,#16a34a);cursor:pointer;box-shadow:0 8px 22px rgba(22,163,74,.4);}
+
+.fs-close{display:none;position:fixed;top:14px;right:14px;z-index:600;width:44px;height:44px;border-radius:50%;border:1px solid var(--glass-border);background:var(--glass-bg-card);color:var(--text);font-size:20px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.25);backdrop-filter:blur(10px);}
+body.wheel-full{overflow:hidden;}
+body.wheel-full .wrap{max-width:none;padding:0;}
+body.wheel-full .head,body.wheel-full .panel{display:none;}
+body.wheel-full .layout{grid-template-columns:1fr;min-height:100dvh;place-items:center;gap:0;}
+body.wheel-full .wheel-box{gap:clamp(14px,3.5vh,26px);width:100%;}
+body.wheel-full .wheel-stage{max-width:min(80vh,95vw);width:min(80vh,95vw);}
+body.wheel-full .spin-btn{font-size:19px;padding:16px 54px;}
+body.wheel-full .fs-close{display:flex;}
+
+@media(max-width:768px){.wrap{padding:16px 12px 50px;}.head h1{font-size:19px;}.head .sub{display:none;}}
+@media(max-width:560px){.wrap{padding:12px 10px 42px;}.wheel-stage{max-width:min(94vw,430px);}.spin-btn{font-size:15px;padding:12px 36px;}#names{font-size:16px;min-height:150px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="ico">🎡</span>
+    <h1>รูเล็ตสุ่มชื่อ</h1>
+    <span class="sub">ล้อรูเล็ตจริง · ใส่ชื่อเหนือเลข · บอลตกเลขไหน = ได้คนนั้น</span>
+    <button class="expand-btn" id="btnExpand">⛶ เต็มจอ</button>
+  </div>
+  <button class="fs-close" id="btnClose" title="ออกจากเต็มจอ (Esc)">✕</button>
+
+  <div class="layout">
+    <div class="wheel-box">
+      <div class="wheel-stage">
+        <canvas id="wheel" width="660" height="660"></canvas>
+      </div>
+      <button class="spin-btn" id="spinBtn">🎯 หมุนรูเล็ต</button>
+    </div>
+
+    <div class="panel">
+      <h2>👤 ชื่อคน (ใส่เหนือเลข) <span class="cnt" id="nameCount">0</span></h2>
+      <textarea id="names" placeholder="1 ชื่อต่อบรรทัด&#10;ใส่ไปเรื่อยๆ ระบบวางเหนือเลข 0,32,15,...&#10;เช่น&#10;โอม&#10;เบล&#10;ช้างฟาง"></textarea>
+      <div class="hint">💡 แต่ละชื่อวางเหนือเลขวนไปรอบวง · บอลจะตกที่ <b>เลขที่มีชื่อ</b> เท่านั้น (ถ้าใส่ชื่อ) · สูงสุด 37 ชื่อ</div>
+      <div class="row">
+        <button class="btn" id="btnShuffle">🔀 สลับ</button>
+        <button class="btn" id="btnSample">✨ ตัวอย่าง</button>
+        <button class="btn" id="btnClear">🗑️ ล้าง</button>
+      </div>
+      <label class="opt"><input type="checkbox" id="optSound" checked> 🔊 เปิดเสียง</label>
+      <div class="hist">
+        <h2>📊 ออกล่าสุด</h2>
+        <div class="hist-row" id="histRow"><span class="hist-empty">ยังไม่มีผล</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-modal" onclick="if(event.target===this)closeWin()">
+  <div class="win-box">
+    <div class="wnum" id="win-num">0</div>
+    <div class="lbl" id="win-lbl">ผู้โชคดี</div>
+    <div class="name" id="win-name">—</div>
+    <button class="big-btn" onclick="closeWin()">🍻 โอเค!</button>
+  </div>
+</div>
+
+<script>
+var canvas=document.getElementById('wheel'), ctx=canvas.getContext('2d');
+var ORDER=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+var REDS={1:1,3:1,5:1,7:1,9:1,12:1,14:1,16:1,18:1,19:1,21:1,23:1,25:1,27:1,30:1,32:1,34:1,36:1};
+function ncolor(n){return n===0?'green':(REDS[n]?'red':'black');}
+var N=ORDER.length, step=2*Math.PI/N;              // 37 pockets
+var SAMPLE=['โอม','เบล','ช้างฟาง','เป้เป้','มิ้น','บอส','ปูน','ฟ้า','เจได','ต้น','นัท','กี้'];
+var NAMES=[];                                       // NAMES[i] optional, aligned to pocket index i
+var DPR=Math.min(window.devicePixelRatio||1,2);
+var wheelRot=0, ballAng=-Math.PI/2, ballRadF=0.70, spinning=false, spinHist=[], winIdx=-1;
+
+function sndOn(){var e=document.getElementById('optSound');return !e||e.checked;}
+var _ac=null;function ac(){if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(_ac&&_ac.state==='suspended')_ac.resume();return _ac;}
+function beep(f,d,t,v){var a=_ac;if(!a||!sndOn())return;try{var o=a.createOscillator(),g=a.createGain();o.type=t||'square';o.frequency.value=f;var tt=a.currentTime;g.gain.setValueAtTime(v||0.05,tt);g.gain.exponentialRampToValueAtTime(0.0001,tt+(d||0.05));o.connect(g);g.connect(a.destination);o.start(tt);o.stop(tt+(d||0.05));}catch(e){}}
+function clack(v){var a=_ac;if(!a||!sndOn())return;try{var n=Math.floor(a.sampleRate*0.04),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);for(var i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);var s=a.createBufferSource();s.buffer=b;var g=a.createGain();g.gain.value=v||0.3;s.connect(g);g.connect(a.destination);s.start();}catch(e){}}
+function tada(){[0,4,7,12].forEach(function(s,i){setTimeout(function(){beep(392*Math.pow(2,s/12),0.2,'triangle',0.08);},i*90);});}
+function hap(p){if(window.TRRfx)TRRfx.haptic(p);}
+
+function parseNames(){
+  var lines=document.getElementById('names').value.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});
+  NAMES=lines.slice(0,N);
+  document.getElementById('nameCount').textContent=NAMES.length;
+  try{localStorage.setItem('roulette_names',JSON.stringify(NAMES));}catch(e){}
+  draw();
+}
+function setNames(arr){document.getElementById('names').value=arr.join('\n');parseNames();}
+
+function sizeCanvas(){var box=canvas.getBoundingClientRect();var s=Math.max(200,box.width);canvas.width=s*DPR;canvas.height=s*DPR;draw();}
+
+function draw(){
+  var W=canvas.width, R=W/2, cx=R, cy=R;
+  ctx.clearRect(0,0,W,W);
+  var rBowl=R*0.995, rNameOut=R*0.985, rNameIn=R*0.83, rTrack=R*0.815, rNumOut=R*0.80, rNumIn=R*0.63, rCone=R*0.24;
+  // wooden bowl
+  var bowl=ctx.createRadialGradient(cx,cy*0.72,R*0.25,cx,cy,R);
+  bowl.addColorStop(0,'#8a5a2f');bowl.addColorStop(0.62,'#5a3a1e');bowl.addColorStop(0.86,'#3a2413');bowl.addColorStop(1,'#1c1109');
+  ctx.fillStyle=bowl;ctx.beginPath();ctx.arc(cx,cy,rBowl,0,2*Math.PI);ctx.fill();
+  // name ring band
+  ctx.beginPath();ctx.arc(cx,cy,rNameOut,0,2*Math.PI);ctx.arc(cx,cy,rNameIn,0,2*Math.PI,true);
+  ctx.fillStyle='#43291580';ctx.fill('evenodd');
+  ctx.beginPath();ctx.arc(cx,cy,rNameOut,0,2*Math.PI);ctx.strokeStyle='rgba(212,175,55,.55)';ctx.lineWidth=Math.max(2,W*0.006);ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,rNameIn,0,2*Math.PI);ctx.strokeStyle='rgba(212,175,55,.4)';ctx.lineWidth=Math.max(1,W*0.003);ctx.stroke();
+  var rNameMid=(rNameOut+rNameIn)/2;
+  // number sectors + numbers + names
+  for(var i=0;i<N;i++){
+    var n=ORDER[i], col=ncolor(n);
+    var a0=i*step+wheelRot-step/2, a1=a0+step, mid=i*step+wheelRot;
+    // sector
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,rNumOut,a0,a1);ctx.arc(cx,cy,rNumIn,a1,a0,true);ctx.closePath();
+    ctx.fillStyle=col==='green'?'#158a3a':(col==='red'?'#c81e1e':'#161616');
+    ctx.fill();
+    ctx.strokeStyle='rgba(212,175,55,.55)';ctx.lineWidth=Math.max(1,W*0.0026);ctx.stroke();
+    // number
+    ctx.save();ctx.translate(cx+Math.cos(mid)*(rNumOut+rNumIn)/2,cy+Math.sin(mid)*(rNumOut+rNumIn)/2);ctx.rotate(mid+Math.PI/2);
+    ctx.fillStyle='#fff';ctx.font='800 '+(R*0.052)+'px Prompt, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(n,0,0);ctx.restore();
+    // name ring divider
+    ctx.beginPath();ctx.moveTo(cx+Math.cos(a0)*rNameIn,cy+Math.sin(a0)*rNameIn);ctx.lineTo(cx+Math.cos(a0)*rNameOut,cy+Math.sin(a0)*rNameOut);
+    ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=1;ctx.stroke();
+    // name text (above the number)
+    if(NAMES[i]){
+      ctx.save();ctx.translate(cx+Math.cos(mid)*rNameMid,cy+Math.sin(mid)*rNameMid);ctx.rotate(mid+Math.PI/2);
+      var nm=NAMES[i]; if(nm.length>9)nm=nm.slice(0,8)+'…';
+      ctx.fillStyle='#f7e08a';ctx.font='700 '+(R*0.04)+'px Prompt, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=2;ctx.fillText(nm,0,0);ctx.restore();
+    }
+  }
+  // gold frets (diamond pins) at each boundary on outer edge of number ring
+  for(var f=0;f<N;f++){
+    var fa=(f-0.5)*step+wheelRot;
+    var fx=cx+Math.cos(fa)*rNumOut, fy=cy+Math.sin(fa)*rNumOut, fr=R*0.02;
+    ctx.save();ctx.translate(fx,fy);ctx.rotate(fa);
+    var gd=ctx.createLinearGradient(-fr,-fr,fr,fr);gd.addColorStop(0,'#fff3b0');gd.addColorStop(0.5,'#d4af37');gd.addColorStop(1,'#8a6d1a');
+    ctx.fillStyle=gd;ctx.beginPath();ctx.moveTo(0,-fr);ctx.lineTo(fr*0.8,0);ctx.lineTo(0,fr);ctx.lineTo(-fr*0.8,0);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  // winning pocket highlight (where the ball rests)
+  if(winIdx>=0&&!spinning){
+    var ha0=winIdx*step+wheelRot-step/2, ha1=ha0+step;
+    ctx.save();
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,rNameOut,ha0,ha1);ctx.arc(cx,cy,rNumIn,ha1,ha0,true);ctx.closePath();
+    ctx.strokeStyle='#fde047';ctx.lineWidth=Math.max(2.5,W*0.008);ctx.shadowColor='#fde047';ctx.shadowBlur=W*0.03;ctx.stroke();
+    ctx.fillStyle='rgba(253,224,71,.16)';ctx.fill();
+    ctx.restore();
+  }
+  // ball track groove
+  ctx.beginPath();ctx.arc(cx,cy,rTrack,0,2*Math.PI);ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=Math.max(3,W*0.016);ctx.stroke();
+  // inner wooden cone
+  var cone=ctx.createRadialGradient(cx,cy*0.85,R*0.06,cx,cy,rNumIn);
+  cone.addColorStop(0,'#9a6a38');cone.addColorStop(0.5,'#6e451f');cone.addColorStop(1,'#3a2413');
+  ctx.beginPath();ctx.arc(cx,cy,rNumIn,0,2*Math.PI);ctx.fillStyle=cone;ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=Math.max(1,W*0.004);ctx.stroke();
+  // spokes on cone
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(wheelRot);
+  for(var s2=0;s2<8;s2++){ctx.rotate(2*Math.PI/8);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(rNumIn*0.98,-rNumIn*0.03);ctx.lineTo(rNumIn*0.98,rNumIn*0.03);ctx.closePath();ctx.fillStyle='rgba(0,0,0,.10)';ctx.fill();}
+  ctx.restore();
+  // gold center turret (like real wheel)
+  var g1=ctx.createRadialGradient(cx-rCone*0.3,cy-rCone*0.3,rCone*0.1,cx,cy,rCone);
+  g1.addColorStop(0,'#fff6c8');g1.addColorStop(0.45,'#e6c34a');g1.addColorStop(0.8,'#b8901f');g1.addColorStop(1,'#6e520f');
+  ctx.beginPath();ctx.arc(cx,cy,rCone,0,2*Math.PI);ctx.fillStyle=g1;ctx.fill();
+  ctx.strokeStyle='#5a4310';ctx.lineWidth=Math.max(1,W*0.004);ctx.stroke();
+  var g2=ctx.createRadialGradient(cx-rCone*0.2,cy-rCone*0.2,rCone*0.05,cx,cy,rCone*0.62);
+  g2.addColorStop(0,'#fff3b0');g2.addColorStop(0.6,'#d4af37');g2.addColorStop(1,'#8a6d1a');
+  ctx.beginPath();ctx.arc(cx,cy,rCone*0.62,0,2*Math.PI);ctx.fillStyle=g2;ctx.fill();
+  var g3=ctx.createRadialGradient(cx-rCone*0.12,cy-rCone*0.14,rCone*0.02,cx,cy,rCone*0.3);
+  g3.addColorStop(0,'#fffbe6');g3.addColorStop(1,'#c9a233');
+  ctx.beginPath();ctx.arc(cx,cy,rCone*0.3,0,2*Math.PI);ctx.fillStyle=g3;ctx.fill();
+  // ball
+  var br=R*ballRadF, bx=cx+Math.cos(ballAng)*br, by=cy+Math.sin(ballAng)*br, brad=R*0.036;
+  ctx.beginPath();ctx.arc(bx,by,brad,0,2*Math.PI);
+  var bg=ctx.createRadialGradient(bx-brad*0.4,by-brad*0.4,brad*0.1,bx,by,brad);
+  bg.addColorStop(0,'#ffffff');bg.addColorStop(1,'#c7ccd4');ctx.fillStyle=bg;ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;ctx.stroke();
+}
+
+function spin(){
+  if(spinning)return; ac();
+  spinning=true; document.getElementById('spinBtn').disabled=true;
+  // choose winning pocket: prefer named pockets so a person is always picked
+  var named=[]; for(var k=0;k<N;k++)if(NAMES[k])named.push(k);
+  var w = named.length ? named[Math.floor(Math.random()*named.length)] : Math.floor(Math.random()*N);
+  var winner=ORDER[w], wname=NAMES[w]||'';
+  winIdx=-1;
+  var turns=6+Math.floor(Math.random()*3);
+  // ball rests at a RANDOM screen position each time (not a fixed pointer);
+  // rotate the wheel so the winning pocket ends up under that resting spot.
+  var restAngle=Math.random()*2*Math.PI;
+  var wheelStart=wheelRot, wheelTarget=restAngle - w*step - turns*2*Math.PI;
+  // ball rolls opposite (CCW, increasing angle), decays, ends at restAngle
+  var ballStart=ballAng, ballSpins=turns+6, ballRest=restAngle + ballSpins*2*Math.PI;
+  var t0=null, dur=6600, lastTick=-1, lastDef=-1;
+  var RIM=0.82, REST=0.70, DROP=0.44, SETTLE=0.80;   // radius fractions + phase splits
+  function frame(ts){
+    if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1);
+    // wheel decelerates (easeOutCubic)
+    wheelRot=wheelStart+(wheelTarget-wheelStart)*(1-Math.pow(1-p,3));
+    // ball angle: fast start, long slow tail (easeOutQuart) + settle wobble
+    var e=1-Math.pow(1-p,4);
+    ballAng=ballStart+(ballRest-ballStart)*e;
+    if(p>=SETTLE){var q=(p-SETTLE)/(1-SETTLE);ballAng+=Math.sin(q*Math.PI*5)*step*0.7*(1-q)*(1-q);}
+    // ball radius: ride rim → spiral down over the frets (bounces) → settle in pocket
+    if(p<DROP){
+      ballRadF=RIM+0.004*Math.sin(p*46);                       // riding the track, tiny chatter
+    } else if(p<SETTLE){
+      var d=(p-DROP)/(SETTLE-DROP);                            // 0..1 descent
+      var base=RIM+(REST-RIM)*Math.pow(d,1.35);                // spiral inward, faster as it slows
+      var bump=(RIM-REST)*0.42*Math.exp(-2.4*d)*Math.abs(Math.sin(d*Math.PI*4)); // skipping over deflectors
+      ballRadF=base+bump;
+      var di=Math.floor(d*8);                                  // deflector-hit clacks
+      if(di!==lastDef){lastDef=di;clack(0.3*(1-d)+0.1);hap(6);}
+    } else {
+      var q2=(p-SETTLE)/(1-SETTLE);
+      ballRadF=REST+(RIM-REST)*0.13*Math.abs(Math.cos(q2*Math.PI*3))*(1-q2)*(1-q2); // last little bounces
+    }
+    // rolling ticks (fast on rim, slowing) — driven by pockets passing under the ball
+    if(p<SETTLE){var tick=Math.floor(ballAng/step);if(tick!==lastTick){lastTick=tick;beep(p<DROP?600:460,0.02,'square',0.04);}}
+    draw();
+    if(p<1)requestAnimationFrame(frame);
+    else{wheelRot=((wheelTarget%(2*Math.PI))+2*Math.PI)%(2*Math.PI);ballAng=((restAngle%(2*Math.PI))+2*Math.PI)%(2*Math.PI);ballRadF=REST;winIdx=w;draw();finish(winner,wname);}
+  }
+  requestAnimationFrame(frame);
+}
+
+function finish(num,name){
+  spinning=false; document.getElementById('spinBtn').disabled=false;
+  var col=ncolor(num);
+  var wn=document.getElementById('win-num'); wn.textContent=num; wn.className='wnum '+col;
+  document.getElementById('win-lbl').textContent=name?'ผู้โชคดี 🎉':'ไม่มีชื่อช่องนี้';
+  document.getElementById('win-name').textContent=name||('เลข '+num);
+  document.getElementById('win-modal').classList.add('show');
+  beep(150,0.16,'sine',0.09); tada(); hap([25,40,70]);
+  if(window.TRRfx)TRRfx.confetti({count:90});
+  spinHist.unshift({num:num,col:col,name:name}); if(spinHist.length>8)spinHist.pop(); renderHist();
+}
+function closeWin(){document.getElementById('win-modal').classList.remove('show');}
+function renderHist(){
+  var row=document.getElementById('histRow');
+  if(!spinHist.length){row.innerHTML='<span class="hist-empty">ยังไม่มีผล</span>';return;}
+  row.innerHTML=spinHist.map(function(h){return '<span class="hchip"><span class="n '+h.col+'">'+h.num+'</span>'+(h.name||'—')+'</span>';}).join('');
+}
+
+document.getElementById('names').addEventListener('input',parseNames);
+document.getElementById('spinBtn').addEventListener('click',spin);
+document.getElementById('btnSample').addEventListener('click',function(){setNames(SAMPLE);});
+document.getElementById('btnClear').addEventListener('click',function(){setNames([]);document.getElementById('names').focus();});
+document.getElementById('btnShuffle').addEventListener('click',function(){for(var i=NAMES.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=NAMES[i];NAMES[i]=NAMES[j];NAMES[j]=t;}setNames(NAMES);});
+document.getElementById('optSound').addEventListener('change',function(){try{localStorage.setItem('roulette_sound',this.checked?'1':'0');}catch(e){}});
+try{var sv=localStorage.getItem('roulette_sound');if(sv!==null)document.getElementById('optSound').checked=(sv==='1');}catch(e){}
+
+function setFull(on){document.body.classList.toggle('wheel-full',on);document.getElementById('btnExpand').textContent=on?'⤢ ย่อ':'⛶ เต็มจอ';setTimeout(sizeCanvas,60);}
+document.getElementById('btnExpand').addEventListener('click',function(){setFull(!document.body.classList.contains('wheel-full'));});
+document.getElementById('btnClose').addEventListener('click',function(){setFull(false);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('win-modal').classList.contains('show'))closeWin();else if(document.body.classList.contains('wheel-full'))setFull(false);}});
+window.addEventListener('resize',sizeCanvas);
+window.addEventListener('message',function(e){if(e.data&&(e.data.type==='trr_accent'||e.data.type==='trr_dark_mode'))draw();});
+
+(function(){
+  var saved=null;try{saved=JSON.parse(localStorage.getItem('roulette_names')||'null');}catch(e){}
+  if(saved&&saved.length)document.getElementById('names').value=saved.join('\n');
+  else document.getElementById('names').value=SAMPLE.join('\n');
+  parseNames(); sizeCanvas();
+})();
+</script>
+</body>
+</html>

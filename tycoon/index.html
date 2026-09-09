@@ -48,22 +48,23 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
   33%{box-shadow:0 0 28px rgba(52,211,153,.45),0 20px 50px rgba(15,23,42,.3),inset 0 0 60px rgba(0,0,0,.35);}
   66%{box-shadow:0 0 28px rgba(139,92,246,.5),0 20px 50px rgba(15,23,42,.3),inset 0 0 60px rgba(0,0,0,.35);}
 }
-.tile-in .tn{position:absolute;top:3px;left:5px;font-size:7px;font-weight:800;opacity:.45;color:#fff;}
-.tile.corner .tile-in .tn{color:#3b1d00;opacity:.55;}
-.tile{position:absolute;width:14.28%;height:14.28%;padding:2.5px;}
-.tile-in{width:100%;height:100%;border-radius:10px;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:8px;line-height:1.15;overflow:hidden;color:#f1f5f9;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.25);}
-.tile-in::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--tc,#94a3b8);}
-.tile-in .te{font-size:17px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));margin-top:1px;}
+.tile-in .tn{position:absolute;top:2px;left:4px;font-size:8px;font-weight:800;opacity:.75;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);}
+.tile.corner .tile-in .tn{color:#3b1d00;opacity:.7;text-shadow:none;}
+.tile{position:absolute;width:14.28%;height:14.28%;padding:2.5px;cursor:pointer;}
+.tile-in{width:100%;height:100%;border-radius:10px;background:linear-gradient(160deg,#2a3042,#171b28);border:1.5px solid rgba(255,255,255,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:9.5px;font-weight:700;line-height:1.22;overflow:hidden;color:#f8fafc;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.7);position:relative;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .12s,box-shadow .12s;}
+.tile:hover .tile-in{transform:scale(1.04);box-shadow:0 4px 14px rgba(0,0,0,.45),0 0 0 2px rgba(255,255,255,.28);}
+.tile-in::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--tc,#94a3b8);box-shadow:0 0 8px var(--tc,#94a3b8);}
+.tile-in .te{font-size:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));margin:2px 0 1px;text-shadow:none;}
 .tile-in span{padding:0 2px;}
-.cat-drink .tile-in{--tc:#f43f5e;background:linear-gradient(160deg,rgba(244,63,94,.28),rgba(244,63,94,.10));border-color:rgba(244,63,94,.45);}
-.cat-task .tile-in{--tc:#a78bfa;background:linear-gradient(160deg,rgba(139,92,246,.28),rgba(139,92,246,.10));border-color:rgba(139,92,246,.45);}
-.cat-move .tile-in{--tc:#34d399;background:linear-gradient(160deg,rgba(16,185,129,.28),rgba(16,185,129,.10));border-color:rgba(16,185,129,.45);}
-.cat-reroll .tile-in{--tc:#60a5fa;background:linear-gradient(160deg,rgba(59,130,246,.28),rgba(59,130,246,.10));border-color:rgba(59,130,246,.45);}
-.cat-swap .tile-in{--tc:#22d3ee;background:linear-gradient(160deg,rgba(6,182,212,.28),rgba(6,182,212,.10));border-color:rgba(6,182,212,.45);}
-.cat-jail .tile-in{--tc:#94a3b8;background:linear-gradient(160deg,rgba(100,116,139,.34),rgba(100,116,139,.12));border-color:rgba(148,163,184,.5);}
-.cat-free .tile-in{--tc:#2dd4bf;background:linear-gradient(160deg,rgba(20,184,166,.28),rgba(20,184,166,.10));border-color:rgba(20,184,166,.45);}
-.tile.corner .tile-in{--tc:#fde047;background:linear-gradient(150deg,#fbbf24,#f97316);color:#3b1d00;font-weight:800;border-color:#fde68a;box-shadow:0 0 14px rgba(251,191,36,.5),0 2px 6px rgba(0,0,0,.3);}
-.tile.corner .tile-in .te{font-size:20px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));}
+.cat-drink .tile-in{--tc:#fb7185;background:linear-gradient(160deg,rgba(244,63,94,.5),rgba(24,10,16,.92));border-color:rgba(251,113,133,.6);}
+.cat-task .tile-in{--tc:#c4b5fd;background:linear-gradient(160deg,rgba(139,92,246,.5),rgba(18,12,28,.92));border-color:rgba(196,181,253,.6);}
+.cat-move .tile-in{--tc:#6ee7b7;background:linear-gradient(160deg,rgba(16,185,129,.5),rgba(8,22,17,.92));border-color:rgba(110,231,183,.6);}
+.cat-reroll .tile-in{--tc:#93c5fd;background:linear-gradient(160deg,rgba(59,130,246,.5),rgba(9,16,28,.92));border-color:rgba(147,197,253,.6);}
+.cat-swap .tile-in{--tc:#67e8f9;background:linear-gradient(160deg,rgba(6,182,212,.5),rgba(6,20,24,.92));border-color:rgba(103,232,249,.6);}
+.cat-jail .tile-in{--tc:#cbd5e1;background:linear-gradient(160deg,rgba(100,116,139,.55),rgba(15,18,24,.92));border-color:rgba(203,213,225,.6);}
+.cat-free .tile-in{--tc:#5eead4;background:linear-gradient(160deg,rgba(20,184,166,.5),rgba(6,22,20,.92));border-color:rgba(94,234,212,.6);}
+.tile.corner .tile-in{--tc:#fde047;background:linear-gradient(150deg,#fcd34d,#f97316);color:#2a1400;font-weight:800;border-color:#fde68a;text-shadow:0 1px 1px rgba(255,255,255,.35);box-shadow:0 0 14px rgba(251,191,36,.5),0 2px 6px rgba(0,0,0,.3);}
+.tile.corner .tile-in .te{font-size:21px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));}
 .tile.here{z-index:4;}
 .tile.here .tile-in{animation:herePulse 1s ease-in-out infinite;}
 @keyframes herePulse{0%,100%{box-shadow:0 0 0 3px var(--accent),0 0 10px var(--accent);transform:scale(1.03);}50%{box-shadow:0 0 0 3px var(--accent),0 0 22px var(--accent);transform:scale(1.09);}}
@@ -78,10 +79,12 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 .die3d{width:84px;height:84px;perspective:620px;margin:6px auto 2px;animation:dieFloat 3.4s ease-in-out infinite;will-change:transform;}
 @keyframes dieFloat{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-7px) rotate(1deg);}}
 .cube{width:84px;height:84px;position:relative;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(24deg);will-change:transform;}
-.cube .face{position:absolute;width:96px;height:96px;margin:-6px;border-radius:6px;
-  background:linear-gradient(145deg,#ffffff 0%,#eef1f7 55%,#d6dbe6 100%);
-  box-shadow:inset 0 3px 3px rgba(255,255,255,.95),inset 0 -6px 10px rgba(120,130,150,.28),inset 0 0 0 1px rgba(200,206,216,.9);
-  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:13px;overflow:hidden;backface-visibility:hidden;}
+.cube .face{position:absolute;width:84px;height:84px;border-radius:14px;
+  background:linear-gradient(145deg,#ffffff 0%,#eef1f7 55%,#d3d8e3 100%);
+  box-shadow:inset 0 3px 4px rgba(255,255,255,.95),inset 0 -7px 12px rgba(120,130,150,.32),inset 0 0 0 1px rgba(188,195,207,.9);
+  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:14px;overflow:hidden;backface-visibility:hidden;}
+/* solid inner body — fills the rounded-corner gaps so edges read as clean bevels, no see-through */
+.cube .facebody{position:absolute;width:84px;height:84px;border-radius:11px;background:linear-gradient(145deg,#d3d8e2,#b9c0cd);backface-visibility:hidden;}
 .cube .face::after{content:'';position:absolute;top:-40%;left:-30%;width:80%;height:150%;background:linear-gradient(115deg,rgba(255,255,255,.55),rgba(255,255,255,0) 55%);transform:rotate(8deg);pointer-events:none;}
 .cube .pip{width:13px;height:13px;border-radius:50%;align-self:center;justify-self:center;
   background:radial-gradient(circle at 34% 28%,#8b95a6 0%,#374151 45%,#0b1120 100%);
@@ -130,6 +133,35 @@ body.game-full .gbtns{max-width:340px;width:100%;}
   #setup{padding:16px;}
   .roll-btn{font-size:15px;padding:11px 28px;}
 }
+
+/* Tile editor modal */
+#tile-modal{display:none;position:fixed;inset:0;z-index:9500;background:rgba(8,10,18,.6);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px;}
+#tile-modal.show{display:flex;}
+.te-box{background:linear-gradient(160deg,#232b45,#141826);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:20px 18px;width:100%;max-width:440px;max-height:90dvh;overflow:auto;box-shadow:0 24px 64px rgba(0,0,0,.55);color:#e8ecf5;}
+.te-box h3{font-size:16px;font-weight:800;margin-bottom:3px;color:#fff;}
+.te-box .te-sub{font-size:12px;color:#94a3b8;margin-bottom:14px;}
+.te-lbl{font-size:12px;font-weight:700;color:#aab4c5;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.5px;}
+.te-presets{display:flex;flex-wrap:wrap;gap:7px;max-height:34vh;overflow-y:auto;padding:2px 4px 2px 0;}
+.te-chip{font-family:inherit;font-size:12px;font-weight:600;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#e8ecf5;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.12s;text-align:left;line-height:1.2;}
+.te-chip:hover{background:rgba(255,255,255,.14);}
+.te-chip.sel{border-color:var(--primary,#6366f1);background:rgba(99,102,241,.25);box-shadow:0 0 0 1px var(--primary,#6366f1);}
+.te-chip .ce{font-size:16px;}
+.te-fields{display:flex;gap:8px;align-items:flex-start;margin-top:8px;flex-wrap:wrap;}
+.te-fields .fld{display:flex;flex-direction:column;gap:4px;}
+.te-fields label{font-size:11px;color:#94a3b8;}
+.te-in{padding:9px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.25);color:#fff;font-family:inherit;font-size:14px;outline:none;}
+.te-in:focus{border-color:var(--primary,#6366f1);}
+#te-emoji{width:56px;text-align:center;font-size:20px;}
+#te-text{flex:1;min-width:150px;}
+#te-type,#te-steps{font-size:13px;}
+#te-steps-wrap{display:none;}
+.te-preview{margin-top:14px;display:flex;align-items:center;gap:10px;}
+.te-preview .pv{width:74px;height:74px;flex-shrink:0;}
+.te-btns{display:flex;gap:8px;margin-top:16px;position:sticky;bottom:-1px;background:linear-gradient(180deg,rgba(20,24,38,0),#141826 32%);padding-top:12px;}
+.te-btns button{flex:1;font-family:inherit;font-size:14px;font-weight:700;padding:12px;border-radius:12px;border:none;cursor:pointer;}
+.te-save{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;}
+.te-reset{background:rgba(255,255,255,.08);color:#cbd5e1;border:1px solid rgba(255,255,255,.14)!important;}
+.te-cancel{background:rgba(255,255,255,.08);color:#cbd5e1;border:1px solid rgba(255,255,255,.14)!important;}
 </style>
 </head>
 <body>
@@ -161,8 +193,48 @@ body.game-full .gbtns{max-width:340px;width:100%;}
       </div>
     </div>
     <div class="players-bar" id="players-bar"></div>
+    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:10px;">💡 แตะช่องบนกระดานเพื่อเปลี่ยนคำสั่ง</div>
     <div class="gbtns">
       <button class="btn" onclick="newGame()">↺ เริ่มใหม่</button>
+      <button class="btn" onclick="resetAllTiles()">🧹 คืนค่าช่องทั้งหมด</button>
+    </div>
+  </div>
+</div>
+
+<!-- tile editor modal -->
+<div id="tile-modal">
+  <div class="te-box">
+    <h3 id="te-title">แก้ช่อง</h3>
+    <div class="te-sub">เลือกแบบสำเร็จรูป หรือเขียนเอง แล้วกดบันทึก</div>
+    <div class="te-lbl">แบบสำเร็จรูป</div>
+    <div class="te-presets" id="te-presets"></div>
+    <div class="te-lbl">เขียนเอง / ปรับแต่ง</div>
+    <div class="te-fields">
+      <div class="fld"><label>ไอคอน</label><input class="te-in" id="te-emoji" maxlength="4"></div>
+      <div class="fld" style="flex:1"><label>ข้อความ</label><input class="te-in" id="te-text" maxlength="42" placeholder="เช่น ดื่ม 2 อึก"></div>
+    </div>
+    <div class="te-fields">
+      <div class="fld" style="flex:1"><label>ประเภท (การทำงาน)</label>
+        <select class="te-in" id="te-type" onchange="teTypeChange()">
+          <option value="drink">🍺 ดื่ม</option>
+          <option value="task">🎯 ภารกิจ</option>
+          <option value="move-fwd">⏩ เดินหน้า (ช่อง)</option>
+          <option value="move-back">⏪ ถอยหลัง (ช่อง)</option>
+          <option value="reroll">🎲 ทอยใหม่</option>
+          <option value="swap">🔀 สลับที่กับคนนำ</option>
+          <option value="skip">💤 พักตา (ข้าม)</option>
+          <option value="randdrink">🎲 สุ่มจำนวนอึก</option>
+          <option value="corner">🎉 ทุกคนดื่ม (พิเศษ)</option>
+          <option value="free">⭐ ฟรี ไม่ต้องทำ</option>
+        </select>
+      </div>
+      <div class="fld" id="te-steps-wrap"><label>กี่ช่อง</label><input class="te-in" id="te-steps" type="number" min="1" max="6" value="3" style="width:70px"></div>
+    </div>
+    <div class="te-preview"><div class="pv" id="te-preview-tile"></div><div class="te-sub" style="margin:0">ตัวอย่างช่อง</div></div>
+    <div class="te-btns">
+      <button class="te-cancel" onclick="teClose()">ยกเลิก</button>
+      <button class="te-reset" onclick="teResetTile()">↺ ค่าเดิม</button>
+      <button class="te-save" onclick="teSave()">บันทึก</button>
     </div>
   </div>
 </div>
@@ -205,6 +277,12 @@ var TILES=[
   {e:'⭐',t:'ฟรี!<br>ไม่ต้องทำ',type:'free'}
 ];
 var N=TILES.length; // 24
+// keep pristine defaults for "reset", then apply any saved per-tile overrides
+var DEFAULT_TILES=TILES.map(function(t){return {e:t.e,t:t.t,type:t.type,mv:t.mv};});
+function saveTileOverrides(){
+  try{var o={};for(var i=0;i<N;i++){var d=DEFAULT_TILES[i],c=TILES[i];if(c.e!==d.e||c.t!==d.t||c.type!==d.type||c.mv!==d.mv)o[i]={e:c.e,t:c.t,type:c.type,mv:c.mv};}localStorage.setItem('tycoon_tiles',JSON.stringify(o));}catch(e){}
+}
+(function loadTileOverrides(){try{var o=JSON.parse(localStorage.getItem('tycoon_tiles')||'{}');Object.keys(o).forEach(function(k){var i=+k;if(TILES[i]){var v=o[k];TILES[i]={e:v.e,t:v.t,type:v.type,mv:v.mv};}});}catch(e){}})();
 // perimeter positions on 7x7 grid (row,col), clockwise from top-left
 function tilePos(i){
   var rc;
@@ -239,6 +317,9 @@ function buildCube(){
   var cube=document.getElementById('cube'); if(!cube||cube.childElementCount)return; // build once
   var faces={1:'translateZ(42px)',2:'rotateX(90deg) translateZ(42px)',3:'rotateY(90deg) translateZ(42px)',4:'rotateY(-90deg) translateZ(42px)',5:'rotateX(-90deg) translateZ(42px)',6:'rotateY(180deg) translateZ(42px)'};
   var pips={1:[5],2:[1,9],3:[1,5,9],4:[1,3,7,9],5:[1,3,5,7,9],6:[1,3,4,6,7,9]};
+  // inner solid body (slightly recessed) fills the rounded-corner gaps at the cube vertices
+  var bodyT={1:'translateZ(39px)',2:'rotateX(90deg) translateZ(39px)',3:'rotateY(90deg) translateZ(39px)',4:'rotateY(-90deg) translateZ(39px)',5:'rotateX(-90deg) translateZ(39px)',6:'rotateY(180deg) translateZ(39px)'};
+  Object.keys(bodyT).forEach(function(v){var b=document.createElement('div');b.className='facebody';b.style.transform=bodyT[v];cube.appendChild(b);});
   Object.keys(faces).forEach(function(v){
     var f=document.createElement('div');f.className='face';f.style.transform=faces[v];
     for(var c=1;c<=9;c++){var cell=document.createElement('div');if(pips[v].indexOf(c)>=0){var p=document.createElement('div');p.className='pip';cell.appendChild(p);}f.appendChild(cell);}
@@ -259,6 +340,7 @@ function renderBoard(){
     d.className='tile'+(t.type==='corner'?' corner':'')+(cat?' cat-'+cat:'');
     d.id='tile'+i;
     d.style.left=(p.c*14.28)+'%'; d.style.top=(p.r*14.28)+'%';
+    d.setAttribute('onclick','openTileEdit('+i+')');
     d.innerHTML='<div class="tile-in"><span class="tn">'+(i+1)+'</span><span class="te">'+t.e+'</span><span>'+t.t+'</span></div>';
     b.appendChild(d);
   }
@@ -372,6 +454,95 @@ function openAct(emoji,who,txt,cb,special){
 }
 function closeAct(){document.getElementById('act-modal').classList.remove('show');var cb=_actCb;_actCb=null;if(cb)cb();}
 document.getElementById('act-ok').onclick=closeAct;
+
+// ── Tile editor ──
+var TILE_PRESETS=[
+  {e:'🍺',t:'ดื่ม 1 อึก',type:'drink'},
+  {e:'🍺',t:'ดื่ม 2 อึก',type:'drink'},
+  {e:'🍺',t:'ดื่ม 3 อึก',type:'drink'},
+  {e:'🍻',t:'ซ้าย-ขวา ดื่มด้วย',type:'drink'},
+  {e:'👥',t:'จับคู่ดื่ม คนตรงข้าม',type:'drink'},
+  {e:'🎲',t:'สุ่มอึก 1-5',type:'randdrink'},
+  {e:'🎤',t:'ร้องเพลง ไม่ร้อง=ดื่ม',type:'task'},
+  {e:'🕺',t:'เต้น 10 วิ ไม่เต้น=ดื่ม',type:'task'},
+  {e:'😜',t:'จริงหรือกล้า',type:'task'},
+  {e:'📸',t:'ถ่ายรูปท่าฮา',type:'task'},
+  {e:'🤫',t:'ห้ามพูด 1 รอบ',type:'task'},
+  {e:'🗣️',t:'เล่ามุก ไม่ขำ=ดื่ม',type:'task'},
+  {e:'👉',t:'เลือกคน ดื่ม 2 อึก',type:'task'},
+  {e:'⏩',t:'เดินหน้า 3 ช่อง',type:'move',mv:3},
+  {e:'⏪',t:'ถอยหลัง 2 ช่อง',type:'move',mv:-2},
+  {e:'🎁',t:'โชคดี! ข้าม 5 ช่อง',type:'move',mv:5},
+  {e:'🎲',t:'ทอยใหม่อีกครั้ง',type:'reroll'},
+  {e:'🔀',t:'สลับที่กับคนนำ',type:'swap'},
+  {e:'💤',t:'พักตานี้',type:'skip'},
+  {e:'🎉',t:'ปาร์ตี้! ทุกคนดื่ม 2',type:'corner'},
+  {e:'⭐',t:'ฟรี! ไม่ต้องทำ',type:'free'}
+];
+var _teIdx=-1;
+function teType2Cat(ty){return {drink:'drink',randdrink:'drink',task:'task',move:'move',reroll:'reroll',swap:'swap',jail:'jail',skip:'jail',free:'free'}[ty]||'';}
+// internal type -> editor <select> value
+function teType2Sel(t){if(t.type==='move')return t.mv<0?'move-back':'move-fwd';if(t.type==='jail')return 'skip';return t.type;}
+// editor <select> value + steps -> internal {type,mv}
+function teSel2Type(sel,steps){
+  if(sel==='move-fwd')return {type:'move',mv:Math.abs(steps)||1};
+  if(sel==='move-back')return {type:'move',mv:-(Math.abs(steps)||1)};
+  return {type:sel};
+}
+function teTypeChange(){var v=document.getElementById('te-type').value;document.getElementById('te-steps-wrap').style.display=(v==='move-fwd'||v==='move-back')?'flex':'none';teUpdatePreview();}
+function teUpdatePreview(){
+  var e=document.getElementById('te-emoji').value||'❓';
+  var text=(document.getElementById('te-text').value||'').trim()||'—';
+  var sel=document.getElementById('te-type').value;
+  var cat=teType2Cat(sel==='move-fwd'||sel==='move-back'?'move':sel);
+  var corner=(sel==='corner');
+  var pv=document.getElementById('te-preview-tile');
+  pv.innerHTML='<div class="tile '+(corner?'corner ':'')+(cat?'cat-'+cat:'')+'" style="position:relative;left:auto;top:auto;width:74px;height:74px;padding:2.5px;"><div class="tile-in"><span class="te">'+e+'</span><span>'+text+'</span></div></div>';
+}
+function teFill(t){
+  document.getElementById('te-emoji').value=t.e;
+  document.getElementById('te-text').value=(t.t||'').replace(/<br>/g,' ');
+  var sel=teType2Sel(t);
+  document.getElementById('te-type').value=sel;
+  if(t.type==='move')document.getElementById('te-steps').value=Math.abs(t.mv||1);
+  teTypeChange();
+}
+function openTileEdit(i){
+  _teIdx=i;
+  document.getElementById('te-title').textContent='แก้ช่อง '+(i+1);
+  // presets
+  var pc=document.getElementById('te-presets'); pc.innerHTML='';
+  TILE_PRESETS.forEach(function(p){
+    var b=document.createElement('button');b.className='te-chip';b.innerHTML='<span class="ce">'+p.e+'</span>'+p.t;
+    b.onclick=function(){teFill(p);[].forEach.call(pc.children,function(c){c.classList.remove('sel');});b.classList.add('sel');};
+    pc.appendChild(b);
+  });
+  teFill(TILES[i]);
+  document.getElementById('tile-modal').classList.add('show');
+}
+function teClose(){document.getElementById('tile-modal').classList.remove('show');}
+function teSave(){
+  if(_teIdx<0)return;
+  var e=(document.getElementById('te-emoji').value||'').trim()||'❓';
+  var text=(document.getElementById('te-text').value||'').trim()||'ช่องว่าง';
+  var conv=teSel2Type(document.getElementById('te-type').value,parseInt(document.getElementById('te-steps').value,10));
+  TILES[_teIdx]={e:e,t:text,type:conv.type,mv:conv.mv};
+  saveTileOverrides(); renderBoard(); if(players.length)renderTurn();
+  teClose();
+}
+function teResetTile(){
+  if(_teIdx<0)return;
+  var d=DEFAULT_TILES[_teIdx]; TILES[_teIdx]={e:d.e,t:d.t,type:d.type,mv:d.mv};
+  saveTileOverrides(); renderBoard(); if(players.length)renderTurn();
+  teFill(TILES[_teIdx]);
+}
+function resetAllTiles(){
+  if(!confirm('คืนค่าช่องทั้งหมดเป็นค่าเริ่มต้น?'))return;
+  for(var i=0;i<N;i++){var d=DEFAULT_TILES[i];TILES[i]={e:d.e,t:d.t,type:d.type,mv:d.mv};}
+  saveTileOverrides(); renderBoard();
+}
+['te-emoji','te-text'].forEach(function(id){document.getElementById(id).addEventListener('input',teUpdatePreview);});
+document.getElementById('tile-modal').addEventListener('click',function(e){if(e.target===this)teClose();});
 
 buildSetup();
 
