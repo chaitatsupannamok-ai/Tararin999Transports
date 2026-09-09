@@ -256,7 +256,10 @@ function topSegIndex(){
   for(var i=0;i<n;i++){if(a>=b[i][0]&&a<b[i][1])return i;}
   return n-1;
 }
+// tuning: spin FASTER (more revolutions on the whirl steps) + LONGER (more suspense)
+var EXTRA_SPINS=6, TIME_MUL=1.4;
 function rotForWinner(idx,spins){
+  if(spins>0)spins+=EXTRA_SPINS;   // boost only real whirls, keep the slow final creeps (spins:0) intact
   var b=segBounds();
   var mid=(b[idx][0]+b[idx][1])/2;
   var delta=(1.5*Math.PI-(mid+rot))%(2*Math.PI);if(delta<0)delta+=2*Math.PI;
@@ -265,6 +268,7 @@ function rotForWinner(idx,spins){
 var easeOut=function(p){return 1-Math.pow(1-p,3);};
 var easeInOut=function(p){return p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;};
 function animateTo(target,dur,ease,cb){
+  dur=dur*TIME_MUL;
   var start=rot,t0=null;
   function step(ts){
     if(!t0)t0=ts;
@@ -280,6 +284,7 @@ function animateTo(target,dur,ease,cb){
 }
 // Animate segment weights (grow/shrink) while also turning the wheel a bit.
 function animateWeights(fromW,toW,dur,addRot,cb){
+  dur=dur*TIME_MUL;
   var t0=null,startRot=rot;
   function step(ts){
     if(!t0)t0=ts;
