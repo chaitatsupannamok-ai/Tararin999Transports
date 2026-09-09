@@ -85,6 +85,57 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 .fs-opts{display:flex;gap:14px;}
 .fs-opts label{color:#cbd5e1;font-size:13px;display:flex;align-items:center;gap:6px;}
 .fs-opts select{padding:7px 10px;border-radius:9px;border:1px solid #3a4048;background:#1a1f26;color:#fff;font-family:inherit;font-size:13px;}
+
+/* Generic stage fullscreen (bomb + gulp) */
+.stage-expand{position:absolute;top:10px;right:10px;z-index:2;width:38px;height:38px;border-radius:10px;border:1px solid var(--glass-border-sm);background:var(--glass-bg-subtle);color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.stage-expand:hover{background:var(--sb-item-hover);}
+body.stage-open{overflow:hidden;}
+.stage.fs{position:fixed;top:0;left:0;width:100vw;height:100dvh;z-index:9000;border-radius:0;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,2.5vh,20px);padding:max(24px,4vh) 20px;overflow:auto;background:linear-gradient(140deg,var(--bg-from),var(--bg-mid) 55%,var(--bg-to));}
+.stage.fs .stage-expand{position:fixed;top:16px;right:18px;width:46px;height:46px;font-size:20px;z-index:9001;}
+.stage.fs .bomb{font-size:min(60vw,40vh,300px);}
+.stage.fs .gulp-display{font-size:min(52vw,38vh,240px);min-height:auto;}
+.stage.fs .gulp-display.special{font-size:min(9vh,15vw,72px);}
+.stage.fs .big-btn{font-size:clamp(18px,4.6vw,24px);padding:clamp(15px,2.4vh,20px) clamp(40px,10vw,64px);}
+.stage.fs .bomb-status,.stage.fs .roul-status{font-size:clamp(17px,4.4vw,24px);}
+.stage.fs .hint{max-width:540px;font-size:14px;}
+
+/* Responsive: iPad + phone */
+@media(max-width:560px){
+  .wrap{padding:14px 11px 44px;}
+  .head h1{font-size:19px;}
+  .tabs{gap:6px;}
+  .tab{padding:10px 4px;font-size:11.5px;border-radius:11px;}
+  .tab .e{font-size:19px;}
+  .stage{padding:22px 14px 20px;}
+  .bomb{font-size:96px;}
+  .gulp-display{font-size:74px;min-height:88px;}
+  .big-btn{font-size:15px;padding:13px 30px;}
+  .opts{gap:8px;}
+}
+
+/* Roulette 3-scene fullscreen */
+#roul-fs{overflow:auto;gap:clamp(10px,2.2vh,18px);}
+#roul-fs .r-setup,#roul-fs .r-gun,#roul-fs .r-spinctl,#roul-fs .r-playctl{display:none;flex-direction:column;align-items:center;gap:clamp(10px,2vh,16px);width:100%;}
+#roul-fs[data-phase="setup"] .r-setup{display:flex;}
+#roul-fs[data-phase="spin"] .r-gun,#roul-fs[data-phase="spin"] .r-spinctl{display:flex;}
+#roul-fs[data-phase="play"] .r-gun,#roul-fs[data-phase="play"] .r-playctl{display:flex;}
+.rs-label{color:#cbd5e1;font-size:14px;font-weight:600;margin-bottom:2px;}
+.rchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:340px;}
+.rchip{font-family:inherit;font-size:16px;font-weight:800;min-width:52px;padding:11px 8px;border-radius:12px;border:1.5px solid #3a4048;background:#1a1f26;color:#e5e7eb;cursor:pointer;transition:.12s;}
+.rchip:hover{border-color:#6b7280;}
+.rchip.active{background:linear-gradient(135deg,#dc2626,#991b1b);border-color:#fca5a5;color:#fff;box-shadow:0 6px 18px rgba(220,38,38,.4);}
+.fs-spin{font-family:inherit;font-size:18px;font-weight:800;padding:14px 44px;border-radius:16px;border:none;color:#fff;background:linear-gradient(135deg,#2563eb,#1e40af);cursor:pointer;box-shadow:0 8px 24px rgba(37,99,235,.4);letter-spacing:.5px;}
+.fs-spin:disabled{opacity:.5;cursor:default;}
+.fs-start{font-family:inherit;font-size:18px;font-weight:800;padding:14px 46px;border-radius:16px;border:none;color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);cursor:pointer;box-shadow:0 8px 24px rgba(22,163,74,.4);letter-spacing:.5px;}
+.fs-start:disabled{opacity:.4;cursor:default;}
+.fs-mini{font-family:inherit;font-size:13px;font-weight:600;padding:9px 20px;border-radius:11px;border:1px solid #3a4048;background:#1a1f26;color:#cbd5e1;cursor:pointer;}
+.r-scene-tag{color:#64748b;font-size:12px;letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+.r-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;}
+@media(max-width:560px){
+  .fs-gunwrap{width:min(88vw,420px)!important;}
+  .fs-title{font-size:16px;}
+  .fs-spin,.fs-start,.fs-trigger{font-size:16px;padding:13px 34px;}
+}
 </style>
 </head>
 <body>
@@ -105,6 +156,7 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
   <!-- BOMB -->
   <div class="game active" id="game-bomb">
     <div class="stage" id="bomb-stage">
+      <button class="stage-expand" onclick="stageFull('bomb-stage',this)" title="ขยายเต็มจอ">⛶</button>
       <div class="bomb" id="bomb">💣</div>
       <div class="bomb-status" id="bomb-status">กดจุดชนวน แล้วส่งต่อกันไปเรื่อยๆ</div>
       <button class="big-btn danger" id="bomb-btn" onclick="bombArm()">🔥 จุดชนวน</button>
@@ -114,7 +166,8 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 
   <!-- GULPS -->
   <div class="game" id="game-gulp">
-    <div class="stage">
+    <div class="stage" id="gulp-stage">
+      <button class="stage-expand" onclick="stageFull('gulp-stage',this)" title="ขยายเต็มจอ">⛶</button>
       <div class="gulp-display" id="gulp-display">🍺</div>
       <button class="big-btn" id="gulp-btn" onclick="gulpRoll()">🎲 สุ่มจำนวนอึก</button>
       <div class="hint">สุ่มว่าต้องดื่มกี่อึก · มีช่องพิเศษ: ปลอดภัย / ทุกคนดื่ม / ดื่มรัว / ส่งต่อ</div>
@@ -124,67 +177,112 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
   <!-- ROULETTE -->
   <div class="game" id="game-roul">
     <div class="stage" id="roul-stage">
-      <div class="cyl" id="cyl"></div>
-      <div class="roul-status" id="roul-status">หมุนลูกโม่แล้วลั่นไก...</div>
-      <div class="streak" id="roul-streak"></div>
-      <div class="opts" style="margin-top:2px;margin-bottom:14px;">
-        <button class="big-btn" style="padding:9px 18px;font-size:13px;margin:0;" onclick="roulOpenFS()">⛶ ขยายเต็มจอ (ปืนจริง)</button>
-      </div>
-      <button class="big-btn danger" id="roul-btn" onclick="roulPull()">🔫 ลั่นไก</button>
-      <div class="opts">
-        <label>ช่อง <select id="roul-chambers"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option></select></label>
-        <label>กระสุน <select id="roul-bullets"><option selected>1</option><option>2</option><option>3</option></select></label>
-      </div>
-      <div class="hint">เสี่ยงดวง! โดนกระสุน = ดื่มรัว 🔥 · รอดไปเรื่อยๆ ยิ่งลุ้น · กด "ขยายเต็มจอ" เล่นแบบปืนจริง</div>
+      <div style="font-size:64px;line-height:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3));">🔫</div>
+      <div class="roul-status" style="margin-top:6px;">รูเล็ตรัสเซีย</div>
+      <div class="hint" style="margin:10px auto 20px;max-width:360px;line-height:1.6;">เล่นแบบปืนจริง 3 ฉาก:<br><b>1.</b> เลือกขนาดแม็ก + จำนวนกระสุน · <b>2.</b> หมุนแม็ก · <b>3.</b> ลั่นไกทีละคน<br>แม็ก<b>รันไปเรื่อยๆ ไม่สับใหม่</b> · โดนกระสุน = ดื่มรัว 🔥</div>
+      <button class="big-btn danger" onclick="rOpen()">🔫 เริ่มเล่น (เต็มจอ)</button>
     </div>
   </div>
 </div>
 
 <!-- ── Roulette fullscreen (real revolver) ── -->
-<div id="roul-fs">
-  <button class="fs-close" onclick="roulCloseFS()" aria-label="ปิด">✕</button>
+<div id="roul-fs" data-phase="setup">
+  <button class="fs-close" onclick="rClose()" aria-label="ปิด">✕</button>
   <div class="fs-title">รูเล็ตรัสเซีย</div>
-  <div class="fs-gunwrap" id="fs-gunwrap">
-    <svg id="fs-gun" viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- SCENE 1: setup -->
+  <div class="r-setup">
+    <div class="r-scene-tag">ฉาก 1 · ตั้งค่า</div>
+    <div class="rs-label">🔩 ขนาดแม็ก (จำนวนช่อง)</div>
+    <div class="rchips" id="r-chambers"></div>
+    <div class="rs-label">🔴 จำนวนกระสุน</div>
+    <div class="rchips" id="r-bullets"></div>
+    <button class="fs-start" onclick="rGoSpin()" style="margin-top:6px;">ถัดไป: หมุนแม็ก ▶</button>
+  </div>
+
+  <!-- SCENE 2+3 share the gun -->
+  <div class="fs-gunwrap r-gun" id="fs-gunwrap">
+    <svg id="fs-gun" viewBox="0 0 470 300" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="mtl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b636e"/><stop offset="0.5" stop-color="#2b3038"/><stop offset="1" stop-color="#151a20"/></linearGradient>
-        <linearGradient id="mtl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b7280"/><stop offset="1" stop-color="#20252c"/></linearGradient>
-        <radialGradient id="cylg" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#7a828d"/><stop offset="0.6" stop-color="#3a4048"/><stop offset="1" stop-color="#12161b"/></radialGradient>
-        <linearGradient id="grip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6b4a2f"/><stop offset="1" stop-color="#3a2618"/></linearGradient>
+        <linearGradient id="barrelG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b4bcc6"/><stop offset="0.13" stop-color="#7c8590"/><stop offset="0.42" stop-color="#454c56"/><stop offset="0.55" stop-color="#333941"/><stop offset="0.8" stop-color="#1c2027"/><stop offset="1" stop-color="#0c0f14"/></linearGradient>
+        <linearGradient id="ribG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c7ced7"/><stop offset="0.5" stop-color="#6a717b"/><stop offset="1" stop-color="#23282f"/></linearGradient>
+        <linearGradient id="frameG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#969ea8"/><stop offset="0.42" stop-color="#474e58"/><stop offset="0.55" stop-color="#353b43"/><stop offset="1" stop-color="#10141a"/></linearGradient>
+        <radialGradient id="cylg" cx="0.38" cy="0.3" r="0.85"><stop offset="0" stop-color="#a4acb6"/><stop offset="0.42" stop-color="#5a616b"/><stop offset="0.74" stop-color="#2f353d"/><stop offset="1" stop-color="#0f1319"/></radialGradient>
+        <radialGradient id="faceG" cx="0.4" cy="0.34" r="0.8"><stop offset="0" stop-color="#3a414b"/><stop offset="0.6" stop-color="#222831"/><stop offset="1" stop-color="#0c0f14"/></radialGradient>
+        <radialGradient id="pinG" cx="0.4" cy="0.32" r="0.75"><stop offset="0" stop-color="#c2c9d2"/><stop offset="0.5" stop-color="#6a7078"/><stop offset="1" stop-color="#161a20"/></radialGradient>
+        <linearGradient id="wood" x1="0.1" y1="0" x2="0.85" y2="1"><stop offset="0" stop-color="#8a5a34"/><stop offset="0.4" stop-color="#6a4123"/><stop offset="0.75" stop-color="#4a2c16"/><stop offset="1" stop-color="#2e1a0d"/></linearGradient>
         <radialGradient id="flashg" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff8d0"/><stop offset="0.4" stop-color="#ffd23f"/><stop offset="0.8" stop-color="#ff7a00"/><stop offset="1" stop-color="#ff7a00" stop-opacity="0"/></radialGradient>
       </defs>
+
       <!-- muzzle flash (hidden) -->
-      <g id="fs-flash" opacity="0"><path d="M300 150 L360 120 L338 150 L372 138 L344 152 L372 166 L338 152 L360 182 Z" fill="url(#flashg)"/><circle cx="308" cy="151" r="26" fill="url(#flashg)"/></g>
-      <!-- barrel -->
-      <rect x="150" y="132" width="165" height="30" rx="5" fill="url(#mtl)"/>
-      <rect x="150" y="128" width="150" height="9" rx="4" fill="url(#mtl2)"/>
-      <rect x="305" y="128" width="12" height="40" rx="3" fill="#0e1216"/>
-      <!-- frame under cylinder -->
-      <path d="M120 120 h70 v70 h-70 q-14 0 -14 -18 v-34 q0 -18 14 -18 z" fill="url(#mtl)"/>
-      <!-- grip -->
-      <path d="M112 178 q-10 62 -44 96 q-10 8 -20 2 q10 -70 34 -104 z" fill="url(#grip)" stroke="#241608" stroke-width="2"/>
+      <g id="fs-flash" opacity="0"><path d="M432 146 L470 118 L450 145 L478 132 L454 148 L478 162 L450 149 L470 176 Z" fill="url(#flashg)"/><circle cx="438" cy="147" r="24" fill="url(#flashg)"/></g>
+
+      <!-- hammer (spur, top-rear) -->
+      <path id="fs-hammer" d="M70 118 C 58 110 54 96 62 90 C 70 85 82 90 86 100 L 92 118 C 88 124 76 125 70 118 Z" fill="url(#frameG)" stroke="#0c0f14" stroke-width="1.5"/>
+      <path d="M63 96 l14 -6 M64 101 l15 -6 M66 106 l14 -6" stroke="#0c0f14" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- frame: recoil shield / standing breech (behind cylinder) -->
+      <path d="M126 108 C 92 108 68 128 68 156 C 68 184 92 204 126 204 Z" fill="url(#frameG)" stroke="#0b0e13" stroke-width="2"/>
+      <!-- top strap connecting cylinder top to barrel -->
+      <path d="M120 116 L 186 120 L 186 134 L 150 138 C 138 130 130 126 120 128 Z" fill="url(#frameG)"/>
+
+      <!-- barrel assembly -->
+      <rect x="150" y="121" width="272" height="12" rx="3" fill="url(#ribG)"/>
+      <rect x="168" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="196" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="224" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="252" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="280" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="308" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="336" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/><rect x="364" y="123" width="4" height="8" fill="#0c0f14" opacity="0.5"/>
+      <rect x="150" y="132" width="278" height="29" rx="6" fill="url(#barrelG)"/>
+      <rect x="156" y="135" width="266" height="4" rx="2" fill="#c7ced7" opacity="0.45"/>
+      <rect x="150" y="159" width="266" height="23" rx="9" fill="url(#barrelG)"/>
+      <rect x="150" y="166" width="258" height="7" rx="3" fill="#1c2229"/>
+      <circle cx="406" cy="169" r="6" fill="url(#pinG)"/>
+      <!-- muzzle face + bore -->
+      <ellipse cx="427" cy="146" rx="7" ry="15" fill="#0b0e13"/>
+      <circle cx="427" cy="146" r="5.5" fill="#05070a" stroke="#3a4048" stroke-width="1.2"/>
+      <!-- front sight -->
+      <path d="M404 106 L416 106 L416 121 L404 121 Z" fill="url(#frameG)" stroke="#0c0f14" stroke-width="1"/>
+
+      <!-- grip (wood) -->
+      <path d="M100 184 C 92 216 80 252 58 286 Q 53 294 63 295 L 106 298 Q 116 296 118 285 C 126 250 132 214 132 190 Z" fill="url(#wood)" stroke="#231107" stroke-width="2.5"/>
+      <path d="M106 198 C 98 228 88 256 72 284 M118 202 C 112 230 104 256 92 284 M98 202 C 92 226 84 250 70 280" stroke="#2e190c" stroke-width="1.6" opacity="0.5" fill="none"/>
+      <!-- grip cap highlight -->
+      <path d="M100 184 C 92 216 80 252 58 286" stroke="#a06c3e" stroke-width="2" opacity="0.5" fill="none"/>
+
       <!-- trigger guard + trigger -->
-      <path d="M120 190 q26 26 54 20 q-6 18 -30 16 q-24 -2 -30 -20 z" fill="none" stroke="url(#mtl)" stroke-width="8"/>
-      <path d="M138 196 q8 12 2 22 q-10 -2 -12 -14 z" fill="#20252c"/>
-      <!-- hammer -->
-      <path id="fs-hammer" d="M118 118 q-6 -22 -20 -26 q-10 -2 -10 8 q10 4 14 20 z" fill="url(#mtl2)"/>
-      <!-- cylinder -->
+      <path d="M120 182 C 116 214 138 232 162 227 C 182 223 184 203 178 187" fill="none" stroke="url(#frameG)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M141 194 C 138 206 142 217 149 219 C 152 212 152 202 149 193 Z" fill="#20262d" stroke="#0c0f14" stroke-width="1"/>
+
+      <!-- cylinder (rotates) -->
       <g id="fs-cyl">
-        <circle cx="120" cy="155" r="56" fill="url(#cylg)" stroke="#0d1115" stroke-width="4"/>
-        <circle cx="120" cy="155" r="56" fill="none" stroke="#8a929c" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="120" cy="155" r="56" fill="url(#cylg)" stroke="#0a0d11" stroke-width="3"/>
+        <circle cx="120" cy="155" r="53" fill="none" stroke="#c2c9d2" stroke-width="1.4" opacity="0.28"/>
+        <circle cx="120" cy="155" r="47" fill="url(#faceG)" stroke="#0b0e13" stroke-width="2"/>
         <g id="fs-holes"></g>
-        <circle cx="120" cy="155" r="9" fill="#12161b" stroke="#565e68" stroke-width="2"/>
+        <circle cx="120" cy="155" r="11" fill="url(#pinG)" stroke="#0b0e13" stroke-width="1.5"/>
+        <path d="M120 147 l2.2 3.6 4.2 .7 -3 3 .8 4.2 -3.8 -2 -3.8 2 .8 -4.2 -3 -3 4.2 -.7 Z" fill="#0c1015" opacity="0.8"/>
       </g>
+
       <!-- firing-position marker (static) -->
-      <path d="M120 86 l11 17 h-22 z" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+      <path d="M120 84 l12 19 h-24 z" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
     </svg>
   </div>
-  <div class="fs-status" id="fs-status">หมุนโม่แล้วลั่นไก</div>
-  <div class="fs-streak" id="fs-streak"></div>
-  <button class="fs-trigger" id="fs-trigger" onclick="fsFire()">🔫 ลั่นไก</button>
-  <div class="fs-opts">
-    <label>ช่อง <select id="fs-chambers"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option></select></label>
-    <label>กระสุน <select id="fs-bullets"><option selected>1</option><option>2</option><option>3</option></select></label>
+
+  <!-- SCENE 2: spin -->
+  <div class="r-spinctl">
+    <div class="r-scene-tag">ฉาก 2 · หมุนแม็ก</div>
+    <div class="fs-status" id="r-spin-status">กดหมุนแม็ก (หมุนกี่รอบก็ได้)</div>
+    <div class="r-actions">
+      <button class="fs-spin" onclick="rSpin()">🔄 หมุนแม็ก</button>
+      <button class="fs-start" id="r-startbtn" onclick="rStart()" disabled>▶ เริ่มเล่น</button>
+    </div>
+    <button class="fs-mini" onclick="rReset()">↺ เปลี่ยนขนาด/กระสุน</button>
+  </div>
+
+  <!-- SCENE 3: play -->
+  <div class="r-playctl">
+    <div class="r-scene-tag">ฉาก 3 · ลั่นไก</div>
+    <div class="fs-status" id="fs-status">ส่งปืนต่อกัน · ลั่นไกทีละคน</div>
+    <div class="fs-streak" id="fs-streak"></div>
+    <button class="fs-trigger" id="fs-trigger" onclick="rPull()">🔫 ลั่นไก</button>
+    <button class="fs-mini" onclick="rReset()">↺ ตั้งใหม่</button>
   </div>
 </div>
 
@@ -197,6 +295,24 @@ function beep(f,d,t,v){var a=_ac;if(!a||!sndOn())return;try{var o=a.createOscill
 function noise(d,v){var a=_ac;if(!a||!sndOn())return;try{var n=Math.floor(a.sampleRate*(d||0.3)),buf=a.createBuffer(1,n,a.sampleRate),c=buf.getChannelData(0);for(var i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);var s=a.createBufferSource();s.buffer=buf;var g=a.createGain();g.gain.value=v||0.4;s.connect(g);g.connect(a.destination);s.start();}catch(e){}}
 function boom(){noise(0.55,0.7);beep(64,0.55,'sawtooth',0.18);}
 function tada(){[0,4,7,12,16].forEach(function(st,i){setTimeout(function(){beep(392*Math.pow(2,st/12),0.2,'triangle',0.08);},i*90);});}
+// ── Generic stage fullscreen (bomb + gulp) ──
+// Move the stage to <body> so position:fixed always covers the true viewport,
+// regardless of any ancestor that creates a containing block (portal iframe, transforms).
+var _stageHome={};
+function stageFull(id,btn){
+  var el=document.getElementById(id);var on=!el.classList.contains('fs');
+  if(on){
+    _stageHome[id]={parent:el.parentNode,next:el.nextSibling};
+    document.body.appendChild(el);
+    el.classList.add('fs');document.body.classList.add('stage-open');
+  }else{
+    el.classList.remove('fs');document.body.classList.remove('stage-open');
+    var h=_stageHome[id];if(h&&h.parent){h.parent.insertBefore(el,h.next);}
+  }
+  var b=btn||el.querySelector('.stage-expand');
+  if(b){b.textContent=on?'✕':'⛶';b.title=on?'ออกจากเต็มจอ (Esc)':'ขยายเต็มจอ';}
+}
+document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var f=document.querySelector('.stage.fs');if(f)stageFull(f.id);});
 function hap(p){if(window.TRRfx)TRRfx.haptic(p);}
 function flash(){var f=document.getElementById('flash');f.classList.add('on');setTimeout(function(){f.classList.remove('on');},130);}
 function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
@@ -207,7 +323,6 @@ function showGame(g,btn){
   document.getElementById('game-'+g).classList.add('active');
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   if(btn)btn.classList.add('active');
-  if(g==='roul')buildCyl();
   try{localStorage.setItem('games_last',g);}catch(e){}
 }
 
@@ -274,62 +389,23 @@ function gulpRoll(){
 }
 
 // ══ 3) ROULETTE ══════════════════════════════════════════
-var roulBusy=false, roulStreak=0;
-function buildCyl(){
-  var n=parseInt(document.getElementById('roul-chambers').value,10);
-  var cyl=document.getElementById('cyl'); cyl.innerHTML='<div class="barrel">🔫</div>';
-  var R=82, cx=100, cy=100;
-  for(var i=0;i<n;i++){
-    var ang=-Math.PI/2+i*2*Math.PI/n;
-    var d=document.createElement('div');d.className='chamber';d.id='ch'+i;
-    d.style.left=(cx+Math.cos(ang)*R)+'px';d.style.top=(cy+Math.sin(ang)*R)+'px';
-    cyl.appendChild(d);
-  }
-}
-function roulPull(){
-  if(roulBusy)return; ac(); roulBusy=true;
-  var n=parseInt(document.getElementById('roul-chambers').value,10);
-  var bullets=parseInt(document.getElementById('roul-bullets').value,10);
-  var btn=document.getElementById('roul-btn'), st=document.getElementById('roul-status');
-  btn.disabled=true; st.textContent='หมุนลูกโม่... 😰';
-  // clear hot
-  for(var c=0;c<n;c++){var e=document.getElementById('ch'+c);if(e)e.classList.remove('hot','cur');}
-  var hit = Math.random() < (bullets/n);
-  var spins=n*2+Math.floor(Math.random()*n), cur=0, i=0, t0=Date.now(), dur=1800+Math.random()*700;
-  function step(){
-    var prev=document.getElementById('ch'+((cur-1+n)%n)); if(prev)prev.classList.remove('cur');
-    var e=document.getElementById('ch'+cur); if(e)e.classList.add('cur');
-    beep(300,0.03,'square',0.05); hap(4);
-    cur=(cur+1)%n; i++;
-    var p=Math.min((Date.now()-t0)/dur,1);
-    if(i>=spins && p>=1){ setTimeout(function(){roulResolve(hit,n);}, 250); return; }
-    setTimeout(step, 60+p*p*220);
-  }
-  step();
-}
-function roulResolve(hit,n){
-  var btn=document.getElementById('roul-btn'), st=document.getElementById('roul-status'), stk=document.getElementById('roul-streak');
-  var curEl=document.querySelector('.chamber.cur');
-  if(hit){
-    if(curEl)curEl.classList.add('hot');
-    st.textContent='💥 ปัง! โดนแล้ว — ดื่มรัวเลย 🔥';
-    boom(); hap([60,40,120]); flash(); shake(document.getElementById('roul-stage'));
-    if(window.TRRfx)TRRfx.confetti({count:80,colors:['#dc2626','#f97316','#fbbf24']});
-    roulStreak=0; stk.textContent='';
-  } else {
-    st.textContent='😅 รอด! ส่งต่อคนถัดไป';
-    beep(700,0.12,'triangle',0.08); beep(900,0.12,'triangle',0.07); hap(30);
-    roulStreak++; stk.textContent='รอดติดต่อกัน '+roulStreak+' ครั้ง 😎';
-  }
-  btn.disabled=false;roulBusy=false;
-}
-
-// ══ Roulette FULLSCREEN (real revolver) ══════════════════
-var fsBusy=false, fsRot=0, fsLastIdx=-1, fsStreak=0;
 var SVGNS='http://www.w3.org/2000/svg';
-function fsBuildHoles(){
-  var n=parseInt(document.getElementById('fs-chambers').value,10);
-  var g=document.getElementById('fs-holes'); g.innerHTML='';
+// Persistent-cylinder roulette. Bullets placed once; each pull advances ONE chamber
+// (no reshuffle). 3 scenes: setup -> spin -> play.
+var R={n:6,bullets:1,layout:[],pos:-1,rot:0,busy:false,streak:0,phase:'setup'};
+var R_CHAMBERS=[4,6,8,10,12,16,20], R_BULLETS=[1,2,3];
+function rChips(){
+  var c=document.getElementById('r-chambers');c.innerHTML='';
+  R_CHAMBERS.forEach(function(v){var b=document.createElement('button');b.className='rchip'+(v===R.n?' active':'');b.textContent=v;b.onclick=function(){ac();R.n=v;if(R.bullets>v-1)R.bullets=v-1;rChips();};c.appendChild(b);});
+  var d=document.getElementById('r-bullets');d.innerHTML='';
+  R_BULLETS.forEach(function(v){var dis=v>R.n-1;var b=document.createElement('button');b.className='rchip'+(v===R.bullets?' active':'');b.textContent=v;if(dis){b.style.opacity=.3;b.style.pointerEvents='none';}b.onclick=function(){ac();R.bullets=v;rChips();};d.appendChild(b);});
+}
+function rSetPhase(p){R.phase=p;document.getElementById('roul-fs').setAttribute('data-phase',p);}
+function rOpen(){ac();R.streak=0;rChips();rSetPhase('setup');document.getElementById('roul-fs').classList.add('show');}
+function rClose(){document.getElementById('roul-fs').classList.remove('show');}
+function rReset(){if(R.busy)return;R.streak=0;rChips();rSetPhase('setup');}
+function rBuildHoles(){
+  var n=R.n, g=document.getElementById('fs-holes'); g.innerHTML='';
   var cx=120,cy=155, r=(n<=6?36:n<=10?39:41), hr=(n<=6?12:n<=10?9:n<=16?6.5:5);
   for(var i=0;i<n;i++){
     var ang=-Math.PI/2+i*2*Math.PI/n, x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
@@ -338,69 +414,103 @@ function fsBuildHoles(){
     c.setAttribute('fill','#0c0f13');c.setAttribute('stroke','#565e68');c.setAttribute('stroke-width','2');c.setAttribute('id','fsh'+i);
     g.appendChild(c);
   }
-  fsRot=0; document.getElementById('fs-cyl').style.transform='rotate(0deg)';
 }
-function roulOpenFS(){
-  ac();
-  document.getElementById('fs-chambers').value=document.getElementById('roul-chambers').value;
-  document.getElementById('fs-bullets').value=document.getElementById('roul-bullets').value;
-  fsBuildHoles(); fsStreak=0;
-  document.getElementById('fs-status').textContent='หมุนโม่แล้วลั่นไก';
-  document.getElementById('fs-streak').textContent='';
-  document.getElementById('roul-fs').classList.add('show');
+// go to spin scene — place bullets ONCE (fixed layout)
+function rGoSpin(){
+  ac(); R.bullets=Math.min(R.bullets,R.n-1);
+  R.layout=[]; R.checked=[]; R.hit=[]; for(var i=0;i<R.n;i++){R.layout.push(false);R.checked.push(false);R.hit.push(false);}
+  var placed=0; while(placed<R.bullets){var k=Math.floor(Math.random()*R.n);if(!R.layout[k]){R.layout[k]=true;placed++;}}
+  R.pos=Math.floor(Math.random()*R.n); R.rot=0; R.busy=false;
+  rBuildHoles();
+  var cyl=document.getElementById('fs-cyl'); cyl.style.transition='none'; cyl.style.transform='rotate(0deg)';
+  document.getElementById('r-startbtn').disabled=true;
+  document.getElementById('r-spin-status').textContent='กดหมุนแม็ก (หมุนกี่รอบก็ได้)';
+  rSetPhase('spin');
 }
-function roulCloseFS(){ document.getElementById('roul-fs').classList.remove('show'); }
-function fsFire(){
-  if(fsBusy)return; ac(); fsBusy=true;
-  var n=parseInt(document.getElementById('fs-chambers').value,10);
-  var bullets=parseInt(document.getElementById('fs-bullets').value,10);
-  var btn=document.getElementById('fs-trigger'), st=document.getElementById('fs-status'), cyl=document.getElementById('fs-cyl');
-  btn.disabled=true; st.textContent='หมุนโม่... 😰';
-  for(var c=0;c<n;c++){var e=document.getElementById('fsh'+c);if(e){e.setAttribute('fill','#0c0f13');e.setAttribute('stroke','#565e68');}}
-  var hit=Math.random()<(bullets/n);
-  var stepDeg=360/n, landHole=Math.floor(Math.random()*n);
-  var turns=3+Math.floor(Math.random()*3);
-  var target=turns*360 - landHole*stepDeg + (Math.random()*6-3);
-  var start=fsRot, t0=null, dur=1700+Math.random()*1000;
+// spin the cylinder (repeatable) — randomizes starting position, keeps fixed bullet layout
+function rSpin(){
+  if(R.busy)return; ac(); R.busy=true;
+  var n=R.n, stepDeg=360/n, cyl=document.getElementById('fs-cyl');
+  var landPos=Math.floor(Math.random()*n), turns=3+Math.floor(Math.random()*3);
+  // land so chamber landPos sits at top marker: rot ≡ -landPos*stepDeg (mod 360)
+  var target=R.rot - turns*360;
+  var want=(((-landPos*stepDeg)%360)+360)%360, cur=(((target%360)+360)%360);
+  target -= ((cur-want+360)%360);
+  var start=R.rot, t0=null, dur=1500+Math.random()*900, last=-1;
+  cyl.style.transition='none';
+  document.getElementById('r-spin-status').textContent='กำลังหมุน... 🌀';
   function step(ts){
     if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1), e=1-Math.pow(1-p,3);
-    fsRot=start+(target-start)*e; cyl.style.transform='rotate('+fsRot+'deg)';
-    var idx=Math.floor((((-fsRot/stepDeg)%n)+n)%n);
-    if(idx!==fsLastIdx){fsLastIdx=idx;beep(300,0.03,'square',0.05);hap(4);}
+    R.rot=start+(target-start)*e; cyl.style.transform='rotate('+R.rot+'deg)';
+    var idx=Math.floor((((-R.rot/stepDeg)%n)+n)%n); if(idx!==last){last=idx;beep(300,0.03,'square',0.05);hap(4);}
     if(p<1)requestAnimationFrame(step);
-    else{fsRot=((target%360)+360)%360;cyl.style.transform='rotate('+fsRot+'deg)';setTimeout(function(){fsResolve(hit,landHole);},220);}
+    else{R.rot=target;R.pos=landPos;cyl.style.transform='rotate('+R.rot+'deg)';beep(180,0.12,'sine',0.07);hap(20);
+      document.getElementById('r-spin-status').textContent='หมุนเสร็จ! กด "เริ่มเล่น" หรือหมุนอีกก็ได้';
+      document.getElementById('r-startbtn').disabled=false; R.busy=false;}
   }
   requestAnimationFrame(step);
 }
-function fsResolve(hit,landHole){
-  var btn=document.getElementById('fs-trigger'), st=document.getElementById('fs-status'), stk=document.getElementById('fs-streak');
-  var hole=document.getElementById('fsh'+landHole);
-  if(hit){
+// remaining bullets / unchecked chambers / next-pull odds (based on what's been fired)
+function rInfo(){
+  var checked=0,i;for(i=0;i<R.n;i++)if(R.checked[i])checked++;
+  var unchk=R.n-checked, left=R.layout.filter(Boolean).length;
+  if(left<=0)return 'แม็กหมดแล้ว 🎯 ปลอดภัยทุกช่อง — กด "ตั้งใหม่"';
+  var odds=unchk>0?Math.round(left/unchk*100):0;
+  return 'เหลือกระสุน '+left+' · ช่องยังไม่ยิง '+unchk+'/'+R.n+' · โอกาสโดน '+odds+'%';
+}
+function rStart(){
+  if(R.busy)return; ac();
+  document.getElementById('fs-status').textContent='ส่งปืนต่อกัน · ลั่นไกทีละคน';
+  document.getElementById('fs-streak').textContent=rInfo();
+  document.getElementById('fs-trigger').disabled=false;
+  rSetPhase('play');
+}
+// pull trigger — advance exactly ONE chamber, no reshuffle
+function rPull(){
+  if(R.busy)return; ac(); R.busy=true;
+  var n=R.n, stepDeg=360/n, cyl=document.getElementById('fs-cyl');
+  var btn=document.getElementById('fs-trigger'); btn.disabled=true;
+  var newPos=(R.pos+1)%n, target=R.rot-stepDeg, start=R.rot, t0=null, dur=430;
+  cyl.style.transition='none';
+  beep(250,0.04,'square',0.06); hap(8);
+  function step(ts){
+    if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1), e=1-Math.pow(1-p,3);
+    R.rot=start+(target-start)*e; cyl.style.transform='rotate('+R.rot+'deg)';
+    if(p<1)requestAnimationFrame(step);
+    else{R.rot=target;R.pos=newPos;cyl.style.transform='rotate('+R.rot+'deg)';setTimeout(function(){rResolve(newPos);},130);}
+  }
+  requestAnimationFrame(step);
+}
+function rResolve(pos){
+  var st=document.getElementById('fs-status'), stk=document.getElementById('fs-streak'), btn=document.getElementById('fs-trigger');
+  R.checked[pos]=true;
+  var hole=document.getElementById('fsh'+pos);
+  if(R.layout[pos]){
+    // BANG — spend this chamber (won't fire again; no reshuffle) and mark it fired-hit (red)
+    R.layout[pos]=false; R.hit[pos]=true;
     if(hole){hole.setAttribute('fill','#dc2626');hole.setAttribute('stroke','#fecaca');}
-    st.textContent='💥 ปัง! โดนแล้ว — ดื่มรัวเลย 🔥';
-    // muzzle flash + recoil + boom
+    st.textContent='💥 ปัง! โดนกระสุน — ดื่มรัวเลย 🔥';
     var fl=document.getElementById('fs-flash'), gw=document.getElementById('fs-gunwrap');
     fl.setAttribute('opacity','1'); gw.classList.remove('recoil');void gw.offsetWidth;gw.classList.add('recoil');
     boom(); hap([70,40,140]); flash();
     if(window.TRRfx)TRRfx.confetti({count:90,colors:['#dc2626','#f97316','#fbbf24']});
     setTimeout(function(){fl.setAttribute('opacity','0');},180);
-    fsStreak=0; stk.textContent='';
-  } else {
+    R.streak=0;
+  }else{
+    // safe — mark this chamber fired-empty (green ✓) unless it was a spent bullet hole (keep red)
+    if(hole&&!R.hit[pos]){hole.setAttribute('fill','#0f2a1a');hole.setAttribute('stroke','#34d399');}
     st.textContent='😅 รอด! ส่งต่อคนถัดไป';
     beep(680,0.12,'triangle',0.08); beep(880,0.12,'triangle',0.07); hap(30);
-    fsStreak++; stk.textContent='รอดติดต่อกัน '+fsStreak+' ครั้ง 😎';
+    R.streak++;
   }
-  btn.disabled=false; fsBusy=false;
+  stk.textContent=rInfo();
+  btn.disabled=false; R.busy=false;
 }
-document.getElementById('fs-chambers').addEventListener('change',function(){document.getElementById('roul-chambers').value=this.value;fsBuildHoles();});
-document.getElementById('fs-bullets').addEventListener('change',function(){document.getElementById('roul-bullets').value=this.value;});
 
 // init
 (function(){
   try{var sd=localStorage.getItem('games_snd');if(sd!==null)document.getElementById('snd').checked=(sd==='1');}catch(e){}
   document.getElementById('snd').addEventListener('change',function(){try{localStorage.setItem('games_snd',this.checked?'1':'0');}catch(e){}});
-  document.getElementById('roul-chambers').addEventListener('change',buildCyl);
-  buildCyl();
   var last='bomb';try{last=localStorage.getItem('games_last')||'bomb';}catch(e){}
   var tb=document.querySelector('.tab[data-g="'+last+'"]'); if(tb&&last!=='bomb')showGame(last,tb);
 })();

@@ -73,6 +73,23 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
 @keyframes wheelShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
 #wheel.win-pulse{animation:winPulse .6s ease 2;}
 @keyframes winPulse{50%{filter:drop-shadow(0 0 22px var(--accent)) drop-shadow(0 12px 30px rgba(15,23,42,.22));}}
+
+/* Expand button + fullscreen mode */
+.expand-btn{font-family:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;border:1px solid var(--glass-border-sm);background:var(--glass-bg-subtle);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;}
+.expand-btn:hover{background:var(--sb-item-hover);transform:translateY(-1px);}
+.fs-close{display:none;position:fixed;top:14px;right:14px;z-index:600;width:44px;height:44px;border-radius:50%;border:1px solid var(--glass-border);background:var(--glass-bg-card);color:var(--text);font-size:20px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.25);backdrop-filter:blur(10px);}
+body.wheel-full{overflow:hidden;}
+body.wheel-full .wrap{max-width:none;padding:0;}
+body.wheel-full .head,body.wheel-full .panel{display:none;}
+body.wheel-full .layout{grid-template-columns:1fr;min-height:100dvh;place-items:center;gap:0;}
+body.wheel-full .wheel-box{gap:clamp(16px,4vh,30px);width:100%;}
+body.wheel-full .wheel-stage{max-width:min(82vh,94vw);width:min(82vh,94vw);}
+body.wheel-full .spin-btn{font-size:19px;padding:16px 52px;}
+body.wheel-full .fs-close{display:flex;}
+
+/* Responsive: iPad + phone */
+@media(max-width:768px){.wrap{padding:16px 12px 50px;}.head h1{font-size:19px;}.head .sub{width:100%;margin-left:0;order:3;}}
+@media(max-width:560px){.wrap{padding:12px 10px 40px;}.wheel-stage{max-width:min(88vw,420px);}.spin-btn{font-size:15px;padding:12px 34px;}.head .ico{width:34px;height:34px;font-size:18px;}.head h1{font-size:18px;}#names{min-height:150px;font-size:16px;}.row{gap:6px;}.btn{padding:8px 11px;font-size:12.5px;}}
 </style>
 </head>
 <body>
@@ -81,7 +98,9 @@ body{font-family:'Prompt','Leelawadee UI',Tahoma,sans-serif;font-size:14px;color
     <span class="ico">🎡</span>
     <h1>วงล้อสุ่มชื่อ</h1>
     <span class="sub">หมุนสุ่มชื่อสำหรับกิจกรรมในออฟฟิศ</span>
+    <button class="expand-btn" id="btnExpand">⛶ เต็มจอ</button>
   </div>
+  <button class="fs-close" id="btnClose" title="ออกจากเต็มจอ (Esc)">✕</button>
 
   <div class="layout">
     <!-- Wheel -->
@@ -459,6 +478,10 @@ document.getElementById('btn-drivers').addEventListener('click',loadDrivers);
 document.getElementById('win-again').addEventListener('click',function(){closeWin();setTimeout(spin,250);});
 document.getElementById('win-remove').addEventListener('click',removeWinner);
 window.addEventListener('resize',sizeCanvas);
+function setFull(on){document.body.classList.toggle('wheel-full',on);document.getElementById('btnExpand').textContent=on?'⤢ ย่อ':'⛶ เต็มจอ';setTimeout(sizeCanvas,60);}
+document.getElementById('btnExpand').addEventListener('click',function(){setFull(!document.body.classList.contains('wheel-full'));});
+document.getElementById('btnClose').addEventListener('click',function(){setFull(false);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('wheel-full'))setFull(false);});
 window.addEventListener('message',function(e){if(e.data&&e.data.type==='trr_accent')draw();if(e.data&&e.data.type==='trr_dark_mode')draw();});
 
 // ── Persist settings ──
